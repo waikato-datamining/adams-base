@@ -26,6 +26,7 @@ import adams.core.ParametersFromFileSupporter;
 import adams.core.PasswordHelper;
 import adams.core.PasswordPrompter;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.base.BasePassword;
 import adams.core.io.PlaceholderFile;
 import adams.core.net.EmailHelper;
@@ -854,20 +855,40 @@ public class SMTPConnection
   /**
    * Initializes the SMTP session with the specified parameters.
    *
-   * @param sendEmail	the object to initialize
-   * @throws Exception	if initialization fails
+   * @param sendEmail		the object to initialize
+   * @param numAttempts 	the number of times to attempt initializing the session (>= 1)
+   * @param attemptInterval 	the number of msec to wait between attempts
+   * @throws Exception		if initialization fails
    */
-  public void initializeSmtpSession(adams.core.net.SendEmail sendEmail) throws Exception {
-    sendEmail.initializeSmtpSession(
-      m_Server,
-      m_Port,
-      m_UseTLS,
-      m_UseSSL,
-      m_Timeout,
-      m_RequiresAuthentication,
-      m_User,
-      m_ActualPassword,
-      m_Protocols);
+  public void initializeSmtpSession(adams.core.net.SendEmail sendEmail, int numAttempts, int attemptInterval) throws Exception {
+    int		attempt;
+
+    if (numAttempts < 1)
+      numAttempts = 1;
+
+    attempt = 0;
+    while (attempt < numAttempts) {
+      attempt++;
+      try {
+	sendEmail.initializeSmtpSession(
+	  m_Server,
+	  m_Port,
+	  m_UseTLS,
+	  m_UseSSL,
+	  m_Timeout,
+	  m_RequiresAuthentication,
+	  m_User,
+	  m_ActualPassword,
+	  m_Protocols);
+	return;
+      }
+      catch (Exception e) {
+	if (attempt == numAttempts)
+	  throw e;
+	else
+	  Utils.wait(this, attemptInterval, 100);
+      }
+    }
   }
 
   /**

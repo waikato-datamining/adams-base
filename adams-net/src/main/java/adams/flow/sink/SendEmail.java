@@ -20,7 +20,9 @@
 
 package adams.flow.sink;
 
+import adams.core.MultiAttemptWithWaitSupporter;
 import adams.core.QuickInfoHelper;
+import adams.core.Utils;
 import adams.core.logging.LoggingHelper;
 import adams.core.net.EmailHelper;
 import adams.flow.core.ActorUtils;
@@ -32,104 +34,96 @@ import java.util.List;
 
 /**
  <!-- globalinfo-start -->
- * Actor for sending emails. The (optional) attachments are taken from the input.<br>
- * Variables in 'subject', 'body' and 'signature' are automatically replaced whenever the actor is executed.<br>
+ * Actor for sending emails.<br>
  * <br><br>
  <!-- globalinfo-end -->
  *
  <!-- options-start -->
- * Valid options are: <br><br>
- * 
- * <pre>-D &lt;int&gt; (property: debugLevel)
- * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
- * &nbsp;&nbsp;&nbsp;the console (0 = off).
- * &nbsp;&nbsp;&nbsp;default: 0
- * &nbsp;&nbsp;&nbsp;minimum: 0
+ * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
+ * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
+ * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
- * &nbsp;&nbsp;&nbsp;default: Email
+ * &nbsp;&nbsp;&nbsp;default: SendEmail
  * </pre>
- * 
- * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
+ *
+ * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
- * <pre>-skip (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ *
+ * <pre>-skip &lt;boolean&gt; (property: skip)
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
+ * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
- * <pre>-stop-flow-on-error (property: stopFlowOnError)
- * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
- * &nbsp;&nbsp;&nbsp; useful for critical actors.
+ *
+ * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
+ * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
+ * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
+ * &nbsp;&nbsp;&nbsp;actors.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
- * <pre>-sender &lt;adams.core.net.EmailAddress&gt; (property: sender)
- * &nbsp;&nbsp;&nbsp;The sender address to use.
+ *
+ * <pre>-silent &lt;boolean&gt; (property: silent)
+ * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
+ * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
- * <pre>-recipient &lt;adams.core.net.EmailAddress&gt; [-recipient ...] (property: recipients)
- * &nbsp;&nbsp;&nbsp;The recipients to send the email to.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-cc &lt;adams.core.net.EmailAddress&gt; [-cc ...] (property: CC)
- * &nbsp;&nbsp;&nbsp;The CC recipients to send the email to.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-bcc &lt;adams.core.net.EmailAddress&gt; [-bcc ...] (property: BCC)
- * &nbsp;&nbsp;&nbsp;The BCC recipients to send the email to.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-subject &lt;java.lang.String&gt; (property: subject)
- * &nbsp;&nbsp;&nbsp;The subject of the email.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-body &lt;adams.core.base.BaseText&gt; (property: body)
- * &nbsp;&nbsp;&nbsp;The body of the email.
- * &nbsp;&nbsp;&nbsp;default: 
- * </pre>
- * 
- * <pre>-signature &lt;adams.core.base.BaseText&gt; (property: signature)
- * &nbsp;&nbsp;&nbsp;The signature of the email, gets separated by an extra line consisting of 
- * &nbsp;&nbsp;&nbsp;'--'.
- * &nbsp;&nbsp;&nbsp;default: Peter Reutemann, Dept. of Computer Science, University of Waikato, NZ\\nhttp:&#47;&#47;www.cms.waikato.ac.nz&#47;~fracpete&#47;          Ph. +64 (7) 858-5174
- * </pre>
- * 
- * <pre>-send-email &lt;adams.core.net.AbstractSendEmail&gt; (property: sendEmail)
+ *
+ * <pre>-send-email &lt;adams.core.net.SendEmail&gt; (property: sendEmail)
  * &nbsp;&nbsp;&nbsp;The engine for sending the emails.
  * &nbsp;&nbsp;&nbsp;default: adams.core.net.JavaMailSendEmail
  * </pre>
- * 
- * <pre>-queue (property: queue)
- * &nbsp;&nbsp;&nbsp;Whether to queue the emails rather than waiting for them to be sent.
+ *
+ * <pre>-num-attempts &lt;int&gt; (property: numAttempts)
+ * &nbsp;&nbsp;&nbsp;The maximum number of initialization attempts to undertake.
+ * &nbsp;&nbsp;&nbsp;default: 3
+ * &nbsp;&nbsp;&nbsp;minimum: 1
  * </pre>
- * 
+ *
+ * <pre>-attempt-interval &lt;int&gt; (property: attemptInterval)
+ * &nbsp;&nbsp;&nbsp;The time in msec to wait before the next attempt.
+ * &nbsp;&nbsp;&nbsp;default: 1000
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
+ * <pre>-queue &lt;boolean&gt; (property: queue)
+ * &nbsp;&nbsp;&nbsp;Whether to queue the emails rather than waiting for them to be sent.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
  */
 public class SendEmail
-  extends AbstractSink {
+  extends AbstractSink
+  implements MultiAttemptWithWaitSupporter {
 
   /** for serialization. */
   private static final long serialVersionUID = -5959868605503747649L;
-  
+
   /** for sending the emails. */
   protected adams.core.net.SendEmail m_SendEmail;
-  
+
+  /** the maximum number of initialization attempts. */
+  protected int m_NumAttempts;
+
+  /** the interval between attempts. */
+  protected int m_AttemptInterval;
+
   /** whether to queue the emails rather than waiting for sending to finish. */
   protected boolean m_Queue;
 
   /** the emails still to send. */
   protected List<SwingWorker> m_Sending;
-  
+
   /**
    * Returns a string describing the object.
    *
@@ -138,8 +132,8 @@ public class SendEmail
   @Override
   public String globalInfo() {
     return
-        "Actor for sending emails.\n"
-      + (EmailHelper.isEnabled() ? "" : "Email support not enabled, check email setup!");
+      "Actor for sending emails.\n"
+	+ (EmailHelper.isEnabled() ? "" : "Email support not enabled, check email setup!");
   }
 
   /**
@@ -154,20 +148,28 @@ public class SendEmail
       EmailHelper.getDefaultSendEmail());
 
     m_OptionManager.add(
+      "num-attempts", "numAttempts",
+      3, 1, null);
+
+    m_OptionManager.add(
+      "attempt-interval", "attemptInterval",
+      1000, 0, null);
+
+    m_OptionManager.add(
       "queue", "queue",
       false);
   }
-  
+
   /**
    * Initializes the members.
    */
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_Sending = new ArrayList<>();
   }
-  
+
   /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
@@ -186,7 +188,7 @@ public class SendEmail
     value = QuickInfoHelper.toString(this, "queue", m_Queue, "queue", ",");
     if (value != null)
       result += value;
-    
+
     return result;
   }
 
@@ -217,6 +219,74 @@ public class SendEmail
    */
   public String sendEmailTipText() {
     return "The engine for sending the emails.";
+  }
+
+  /**
+   * Sets the maximum number of initialization attempts.
+   *
+   * @param value	the maximum
+   */
+  @Override
+  public void setNumAttempts(int value) {
+    if (getOptionManager().isValid("numAttempts", value)) {
+      m_NumAttempts = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the maximum number of initialization attempts.
+   *
+   * @return		the maximum
+   */
+  @Override
+  public int getNumAttempts() {
+    return m_NumAttempts;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String numAttemptsTipText() {
+    return "The maximum number of initialization attempts to undertake.";
+  }
+
+  /**
+   * Sets the time to wait between attempts in msec.
+   *
+   * @param value	the time in msec
+   */
+  @Override
+  public void setAttemptInterval(int value) {
+    if (getOptionManager().isValid("attemptInterval", value)) {
+      m_AttemptInterval = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the time to wait between attempts in msec.
+   *
+   * @return		the time in msec
+   */
+  @Override
+  public int getAttemptInterval() {
+    return m_AttemptInterval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String attemptIntervalTipText() {
+    return "The time in msec to wait before the next attempt.";
   }
 
   /**
@@ -251,7 +321,7 @@ public class SendEmail
   /**
    * Returns the class that the consumer accepts.
    *
-   * @return		<!-- flow-accepts-start -->java.lang.String.class, java.lang.String[].class, java.io.File.class, java.io.File[].class<!-- flow-accepts-end -->
+   * @return		<!-- flow-accepts-start -->adams.core.net.Email.class<!-- flow-accepts-end -->
    */
   public Class[] accepts() {
     return new Class[]{adams.core.net.Email.class};
@@ -278,30 +348,46 @@ public class SendEmail
 
   /**
    * Initializes the SMTP session if required.
-   * 
+   *
    * @throws Exception		if initialization fails
    */
   protected void initSession() throws Exception {
     SMTPConnection	conn;
-    
+    int			attempt;
+
     if (m_SendEmail.requiresSmtpSessionInitialization()) {
       conn = (SMTPConnection) ActorUtils.findClosestType(this, SMTPConnection.class, true);
-      if (conn != null)
-	conn.initializeSmtpSession(m_SendEmail);
-      else
-	m_SendEmail.initializeSmtpSession(
-	    EmailHelper.getSmtpServer(), 
-	    EmailHelper.getSmtpPort(), 
-	    EmailHelper.getSmtpStartTLS(), 
-	    EmailHelper.getSmtpUseSSL(), 
-	    EmailHelper.getSmtpTimeout(), 
-	    EmailHelper.getSmtpRequiresAuthentication(), 
-	    EmailHelper.getSmtpUser(), 
-	    EmailHelper.getSmtpPassword(),
-	    EmailHelper.getSmtpProtocols());
+      if (conn != null) {
+	conn.initializeSmtpSession(m_SendEmail, m_NumAttempts, m_AttemptInterval);
+      }
+      else {
+	attempt = 0;
+	while (attempt < m_NumAttempts) {
+	  attempt++;
+	  try {
+	    m_SendEmail.initializeSmtpSession(
+	      EmailHelper.getSmtpServer(),
+	      EmailHelper.getSmtpPort(),
+	      EmailHelper.getSmtpStartTLS(),
+	      EmailHelper.getSmtpUseSSL(),
+	      EmailHelper.getSmtpTimeout(),
+	      EmailHelper.getSmtpRequiresAuthentication(),
+	      EmailHelper.getSmtpUser(),
+	      EmailHelper.getSmtpPassword(),
+	      EmailHelper.getSmtpProtocols());
+	    return;
+	  }
+	  catch (Exception e) {
+	    if (attempt == m_NumAttempts)
+	      throw e;
+	    else
+	      Utils.wait(this, m_AttemptInterval, 100);
+	  }
+	}
+      }
     }
   }
-  
+
   /**
    * Executes the flow item.
    *
@@ -367,7 +453,7 @@ public class SendEmail
     m_Sending.clear();
     super.stopExecution();
   }
-  
+
   /**
    * Cleans up after the execution has finished.
    */
@@ -383,9 +469,9 @@ public class SendEmail
 	// ignored
       }
     }
-    
+
     m_SendEmail.cleanUp();
-    
+
     super.wrapUp();
   }
 }

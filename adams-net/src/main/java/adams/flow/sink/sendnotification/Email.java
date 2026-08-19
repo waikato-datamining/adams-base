@@ -20,6 +20,7 @@
 
 package adams.flow.sink.sendnotification;
 
+import adams.core.MultiAttemptWithWaitSupporter;
 import adams.core.QuickInfoHelper;
 import adams.core.Utils;
 import adams.core.base.BaseText;
@@ -35,7 +36,8 @@ import adams.flow.standalone.SMTPConnection;
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class Email
-  extends AbstractNotification {
+  extends AbstractNotification
+  implements MultiAttemptWithWaitSupporter {
 
   private static final long serialVersionUID = 1302036525857934850L;
 
@@ -59,6 +61,12 @@ public class Email
 
   /** for sending the emails. */
   protected adams.core.net.SendEmail m_SendEmail;
+
+  /** the maximum number of initialization attempts. */
+  protected int m_NumAttempts;
+
+  /** the interval between attempts. */
+  protected int m_AttemptInterval;
 
   /**
    * Returns a string describing the object.
@@ -104,6 +112,14 @@ public class Email
     m_OptionManager.add(
       "send-email", "sendEmail",
       EmailHelper.getDefaultSendEmail());
+
+    m_OptionManager.add(
+      "num-attempts", "numAttempts",
+      3, 1, null);
+
+    m_OptionManager.add(
+      "attempt-interval", "attemptInterval",
+      1000, 0, null);
   }
 
   /**
@@ -319,8 +335,8 @@ public class Email
    */
   public String signatureTipText() {
     return
-        "The signature of the email, gets separated by an extra line "
-      + "consisting of '" + EmailHelper.SIGNATURE_SEPARATOR + "', can contain variables.";
+      "The signature of the email, gets separated by an extra line "
+	+ "consisting of '" + EmailHelper.SIGNATURE_SEPARATOR + "', can contain variables.";
   }
 
   /**
@@ -353,6 +369,74 @@ public class Email
   }
 
   /**
+   * Sets the maximum number of initialization attempts.
+   *
+   * @param value	the maximum
+   */
+  @Override
+  public void setNumAttempts(int value) {
+    if (getOptionManager().isValid("numAttempts", value)) {
+      m_NumAttempts = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the maximum number of initialization attempts.
+   *
+   * @return		the maximum
+   */
+  @Override
+  public int getNumAttempts() {
+    return m_NumAttempts;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String numAttemptsTipText() {
+    return "The maximum number of initialization attempts to undertake.";
+  }
+
+  /**
+   * Sets the time to wait between attempts in msec.
+   *
+   * @param value	the time in msec
+   */
+  @Override
+  public void setAttemptInterval(int value) {
+    if (getOptionManager().isValid("attemptInterval", value)) {
+      m_AttemptInterval = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the time to wait between attempts in msec.
+   *
+   * @return		the time in msec
+   */
+  @Override
+  public int getAttemptInterval() {
+    return m_AttemptInterval;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  @Override
+  public String attemptIntervalTipText() {
+    return "The time in msec to wait before the next attempt.";
+  }
+
+  /**
    * Hook method before attempting to send the message.
    *
    * @param msg		the message to send
@@ -378,23 +462,39 @@ public class Email
    * @throws Exception		if initialization fails
    */
   protected void initSession() throws Exception {
-    SMTPConnection conn;
+    SMTPConnection	conn;
+    int			attempt;
 
     if (m_SendEmail.requiresSmtpSessionInitialization()) {
       conn = (SMTPConnection) ActorUtils.findClosestType(m_FlowContext, SMTPConnection.class, true);
-      if (conn != null)
-	conn.initializeSmtpSession(m_SendEmail);
-      else
-	m_SendEmail.initializeSmtpSession(
-	    EmailHelper.getSmtpServer(),
-	    EmailHelper.getSmtpPort(),
-	    EmailHelper.getSmtpStartTLS(),
-	    EmailHelper.getSmtpUseSSL(),
-	    EmailHelper.getSmtpTimeout(),
-	    EmailHelper.getSmtpRequiresAuthentication(),
-	    EmailHelper.getSmtpUser(),
-	    EmailHelper.getSmtpPassword(),
-            EmailHelper.getSmtpProtocols());
+      if (conn != null) {
+	conn.initializeSmtpSession(m_SendEmail, m_NumAttempts, m_AttemptInterval);
+      }
+      else {
+	attempt = 0;
+	while (attempt < m_NumAttempts) {
+	  attempt++;
+	  try {
+	    m_SendEmail.initializeSmtpSession(
+	      EmailHelper.getSmtpServer(),
+	      EmailHelper.getSmtpPort(),
+	      EmailHelper.getSmtpStartTLS(),
+	      EmailHelper.getSmtpUseSSL(),
+	      EmailHelper.getSmtpTimeout(),
+	      EmailHelper.getSmtpRequiresAuthentication(),
+	      EmailHelper.getSmtpUser(),
+	      EmailHelper.getSmtpPassword(),
+	      EmailHelper.getSmtpProtocols());
+	    return;
+	  }
+	  catch (Exception e) {
+	    if (attempt == m_NumAttempts)
+	      throw e;
+	    else
+	      Utils.wait(this, m_AttemptInterval, 100);
+	  }
+	}
+      }
     }
   }
 
