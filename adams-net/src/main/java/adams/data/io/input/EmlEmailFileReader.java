@@ -20,12 +20,10 @@
 package adams.data.io.input;
 
 import adams.core.net.Email;
-import adams.core.net.EmailAddress;
+import adams.data.conversion.ReceivedEmailToEmail;
 import jodd.mail.EMLParser;
-import jodd.mail.EmailMessage;
 import jodd.mail.ReceivedEmail;
 
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -150,34 +148,16 @@ public class EmlEmailFileReader
   }
 
   /**
-   * Turns the jodd email address arrays into string ones.
-   *
-   * @param addresses	the array to convert
-   * @return		the converted array
-   */
-  protected String[] toString(jodd.mail.EmailAddress[] addresses) {
-    String[]	result;
-    int		i;
-
-    result = new String[addresses.length];
-    for (i = 0; i < addresses.length; i++)
-      result[i] = addresses[i].getEmail();
-
-    return result;
-  }
-
-  /**
    * Performs the actual reading.
    * 
    * @return		the email that was read, null in case of error
    */
   @Override
   protected Object doRead() {
-    Object		result;
-    ReceivedEmail	email;
-    List<EmailMessage>	msgs;
-    StringBuilder	body;
-    int			i;
+    Object			result;
+    ReceivedEmailToEmail	conv;
+    ReceivedEmail		email;
+    String			msg;
 
     result = null;
 
@@ -185,20 +165,13 @@ public class EmlEmailFileReader
       email = new EMLParser().parse(m_Input.getAbsoluteFile());
       switch (m_EmailType) {
 	case EMAIL:
-	  msgs  = email.messages();
-	  body  = new StringBuilder();
-	  for (i = 0; i < msgs.size(); i++) {
-	    if (msgs.size() > 1)
-	      body.append("---Message #").append(i + 1).append(" ").append(msgs.get(i).getMimeType()).append(" ").append(msgs.get(i).getEncoding()).append("\n");
-	    body.append(msgs.get(i).getContent());
-	    body.append("\n");
-	  }
-	  result = new Email()
-		     .from(email.from().getEmail())
-		     .to((EmailAddress[]) EmailAddress.toObjectArray(toString(email.to()), EmailAddress.class))
-		     .cc((EmailAddress[]) EmailAddress.toObjectArray(toString(email.cc()), EmailAddress.class))
-		     .subject(email.subject())
-		     .body(body.toString());
+	  conv = new ReceivedEmailToEmail();
+	  conv.setInput(email);
+	  msg = conv.convert();
+	  if (msg == null)
+	    result = conv.getOutput();
+	  else
+	    getLogger().severe(msg);
 	  break;
 
 	case RECEIVED_EMAIL:
