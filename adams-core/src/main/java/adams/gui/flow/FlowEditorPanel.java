@@ -155,6 +155,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -592,6 +593,7 @@ public class FlowEditorPanel
 
     // the tabs
     m_Tabs = new FlowTabManager(this);
+    m_Tabs.setBorder(new EmptyBorder(0, 0, 0, 5));
     m_Tabs.addTabVisibilityChangeListener((TabVisibilityChangeEvent e) ->
       m_SplitPane.setRightComponentHidden(m_Tabs.getTabCount() == 0)
     );
