@@ -26,6 +26,7 @@ import adams.core.StatusMessageHandlerExt;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FilenameProposer;
 import adams.core.io.PlaceholderFile;
+import adams.core.logging.LoggingHelper;
 import adams.core.management.Java;
 import adams.core.option.OptionUtils;
 import adams.data.io.input.FlowReader;
@@ -552,8 +553,7 @@ public class FlowEditorPanel
 	m_AdditionalMenuItems.add(item);
       }
       catch (Exception e) {
-	System.err.println("Failed to instantiate additional menu item '" + additional + "':");
-	e.printStackTrace();
+	LoggingHelper.global().severe("Failed to instantiate additional menu item '" + additional + "':", e);
       }
     }
     Collections.sort(m_AdditionalMenuItems);
