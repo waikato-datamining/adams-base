@@ -15,10 +15,11 @@
 
 /*
  * GnumericSpreadSheetReader.java
- * Copyright (C) 2013-2022 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
+import adams.core.io.GzipUtils;
 import adams.core.logging.LoggingHelper;
 import adams.data.io.output.GnumericSpreadSheetWriter;
 import adams.data.io.output.SpreadSheetWriter;
@@ -409,7 +410,7 @@ public class GnumericSpreadSheetReader
     
     try {
       if (!m_UncompressedInput)
-	in = new GZIPInputStream(in);
+	in = new GZIPInputStream(in, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
 
       dbFactory = DocumentBuilderFactory.newInstance();
       dBuilder  = dbFactory.newDocumentBuilder();

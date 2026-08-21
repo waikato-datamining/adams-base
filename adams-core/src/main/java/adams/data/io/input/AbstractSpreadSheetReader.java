@@ -15,7 +15,7 @@
 
 /*
  * AbstractSpreadSheetReader.java
- * Copyright (C) 2010-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
 
@@ -26,6 +26,7 @@ import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileFormatHandler;
 import adams.core.io.FileUtils;
+import adams.core.io.GzipUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractOptionHandler;
@@ -419,13 +420,13 @@ public abstract class AbstractSpreadSheetReader
         case STREAM:
           input = new FileInputStream(filename);
           if (canDecompress(filename))
-            input = new GZIPInputStream(input);
+            input = new GZIPInputStream(input, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
           result = doRead(input);
           break;
         case READER:
           input = new FileInputStream(filename);
           if (canDecompress(filename))
-            input = new GZIPInputStream(input);
+            input = new GZIPInputStream(input, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
           if (m_Encoding != null)
             reader = new BufferedReader(new InputStreamReader(input, getEncoding().charsetValue()));
           else

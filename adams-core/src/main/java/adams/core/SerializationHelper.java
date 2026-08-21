@@ -22,6 +22,7 @@ package adams.core;
 
 import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
+import adams.core.io.GzipUtils;
 import nz.ac.waikato.cms.locator.ClassLocator;
 
 import java.io.BufferedInputStream;
@@ -59,9 +60,6 @@ public class SerializationHelper {
 
   /** the size to use for buffered input/output streams. */
   public final static int BUFFER_SIZE_BUFFEREDSTREAMS = 65536;
-
-  /** the size to use for gzip input/output streams. */
-  public final static int BUFFER_SIZE_GZIPSTREAMS = 65536;
 
   /** the size to use for byte array input/output streams. */
   public final static int BUFFER_SIZE_BYTEARRAYSTREAMS = 65536;
@@ -238,7 +236,7 @@ public class SerializationHelper {
       buffer = new byte[2];
       fis    = new FileInputStream(filename);
       if (filename.endsWith(".gz")) {
-	gis  = new GZIPInputStream(fis, BUFFER_SIZE_GZIPSTREAMS);
+	gis  = new GZIPInputStream(fis, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
 	read = gis.read(buffer, 0, 2);
       }
       else {
@@ -272,7 +270,7 @@ public class SerializationHelper {
     gos = null;
     try {
       if (filename.endsWith(".gz")) {
-	gos = new GZIPOutputStream(fos, BUFFER_SIZE_GZIPSTREAMS);
+	gos = new GZIPOutputStream(fos, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
 	write(gos, o);
       }
       else {
@@ -321,7 +319,7 @@ public class SerializationHelper {
     gos = null;
     try {
       if (filename.endsWith(".gz")) {
-	gos = new GZIPOutputStream(fos, BUFFER_SIZE_GZIPSTREAMS);
+	gos = new GZIPOutputStream(fos, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
 	writeAll(gos, o);
       }
       else {
@@ -385,7 +383,7 @@ public class SerializationHelper {
     gis = null;
     try {
       if (filename.endsWith(".gz")) {
-	gis    = new GZIPInputStream(fis, BUFFER_SIZE_GZIPSTREAMS);
+	gis    = new GZIPInputStream(fis, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
 	result = read(gis);
       }
       else
@@ -441,7 +439,7 @@ public class SerializationHelper {
     gis = null;
     try {
       if (filename.endsWith(".gz")) {
-	gis    = new GZIPInputStream(fis, BUFFER_SIZE_GZIPSTREAMS);
+	gis    = new GZIPInputStream(fis, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
 	result = readAll(gis);
       }
       else {

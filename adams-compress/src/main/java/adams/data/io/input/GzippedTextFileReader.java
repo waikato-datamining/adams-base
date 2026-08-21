@@ -13,11 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * GzippedTextFileReader.java
- * Copyright (C) 2014-2015 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.io.input;
+
+import adams.core.io.GzipUtils;
 
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
@@ -42,7 +44,6 @@ import java.util.zip.GZIPInputStream;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class GzippedTextFileReader
   extends AbstractCompressedTextReader {
@@ -70,7 +71,7 @@ public class GzippedTextFileReader
     GZIPInputStream	gis;
     
     try {
-      gis = new GZIPInputStream(stream);
+      gis = new GZIPInputStream(stream, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
       super.initialize(gis);
       m_TextReader.initialize(gis);
     }

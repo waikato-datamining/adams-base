@@ -25,6 +25,7 @@ import adams.core.Utils;
 import adams.core.base.BaseCharset;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
+import adams.core.io.GzipUtils;
 import adams.data.DateFormatString;
 import adams.data.spreadsheet.SpreadSheetUtils;
 import adams.env.Environment;
@@ -170,7 +171,7 @@ public class SimpleArffLoader
   /**
    * Gets the current option settings for the OptionHandler.
    *
-   * @return the list of current option settings as an array of strings
+   * @return the array of current option settings as an array of strings
    */
   @Override
   public String[] getOptions() {
@@ -179,7 +180,7 @@ public class SimpleArffLoader
       result.add("-force-compression");
     result.add("-encoding");
     result.add(getEncoding().stringValue());
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -717,7 +718,7 @@ public class SimpleArffLoader
     try {
       if (m_sourceFile.getName().endsWith(".gz") || m_ForceCompression) {
 	fis     = new FileInputStream(m_sourceFile.getAbsolutePath());
-	gis     = new GZIPInputStream(fis);
+	gis     = new GZIPInputStream(fis, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
 	isr     = new InputStreamReader(gis, charset.newDecoder());
 	breader = new BufferedReader(isr);
       }

@@ -15,7 +15,7 @@
 
 /*
  * Properties.java
- * Copyright (C) 2008-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -23,6 +23,7 @@ package adams.core;
 import adams.core.base.BasePassword;
 import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
+import adams.core.io.GzipUtils;
 import adams.core.io.TempUtils;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
@@ -590,7 +591,7 @@ public class Properties
       if (file.exists()) {
 	fis = new FileInputStream(filename);
 	if (filename.endsWith(".gz"))
-	  stream = new BufferedInputStream(new GZIPInputStream(fis));
+	  stream = new BufferedInputStream(new GZIPInputStream(fis, GzipUtils.BUFFER_SIZE_GZIPSTREAMS));
 	else
 	  stream = new BufferedInputStream(fis);
 	load(stream);

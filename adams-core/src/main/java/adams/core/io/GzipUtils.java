@@ -15,7 +15,7 @@
 
 /*
  * GzipUtils.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
@@ -50,6 +50,9 @@ public class GzipUtils {
 
   /** the default extension. */
   public final static String EXTENSION = ".gz";
+
+  /** the size to use for gzip input/output streams. */
+  public final static int BUFFER_SIZE_GZIPSTREAMS = 65536;
 
   /** for logging errors. */
   protected static Logger LOGGER = LoggingHelper.getLogger(GzipUtils.class);
@@ -279,7 +282,7 @@ public class GzipUtils {
     cis = null;
     bos = null;
     try {
-      cis = new GZIPInputStream(new ByteArrayInputStream(input));
+      cis = new GZIPInputStream(new ByteArrayInputStream(input), BUFFER_SIZE_GZIPSTREAMS);
       bos = new ByteArrayOutputStream();
       IOUtils.copy(cis, bos, buffer);
       return bos.toByteArray();

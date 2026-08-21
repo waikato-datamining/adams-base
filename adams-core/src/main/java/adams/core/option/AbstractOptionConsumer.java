@@ -15,7 +15,7 @@
 
 /*
  * AbstractOptionConsumer.java
- * Copyright (C) 2011-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -25,6 +25,7 @@ import adams.core.annotation.AnnotationHelper;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.EncodingSupporter;
 import adams.core.io.FileUtils;
+import adams.core.io.GzipUtils;
 import adams.core.logging.LoggingLevel;
 import adams.core.logging.LoggingObject;
 import adams.core.management.CharsetHelper;
@@ -571,7 +572,7 @@ public abstract class AbstractOptionConsumer<C,V>
       content = new StringBuilder();
       fis = new FileInputStream(filename);
       if (filename.toLowerCase().endsWith(".gz"))
-	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis), charset));
+	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis, GzipUtils.BUFFER_SIZE_GZIPSTREAMS), charset));
       else
 	reader = new BufferedReader(new InputStreamReader(fis, charset));
       while ((line = reader.readLine()) != null) {

@@ -24,6 +24,7 @@ import adams.core.DateFormat;
 import adams.core.Properties;
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.io.GzipUtils;
 import adams.data.DateFormatString;
 import adams.data.report.Report;
 import adams.data.timeseries.Timeseries;
@@ -157,7 +158,7 @@ public class SimpleTimeseriesReader
     try {
       if (m_Input.getName().endsWith(".gz")) {
 	fis    = new FileInputStream(m_Input.getAbsolutePath());
-	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis)));
+	reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis, GzipUtils.BUFFER_SIZE_GZIPSTREAMS)));
       }
       else {
 	fr     = new FileReader(m_Input.getAbsolutePath());
@@ -165,17 +166,17 @@ public class SimpleTimeseriesReader
       }
       
       // read whole file
-      content  = new ArrayList<String>();
+      content  = new ArrayList<>();
       while (((line = reader.readLine()) != null))
 	content.add(line);
 
       // report?
-      report = new ArrayList<String>();
-      while ((content.size() > 0) && content.get(0).startsWith(Properties.COMMENT)) {
+      report = new ArrayList<>();
+      while ((!content.isEmpty()) && content.get(0).startsWith(Properties.COMMENT)) {
 	report.add(content.get(0));
 	content.remove(0);
       }
-      if (report.size() > 0) {
+      if (!report.isEmpty()) {
 	sd = Report.parseProperties(Properties.fromComment(Utils.flatten(report, "\n")));
 	if (sd != null) {
 	  series.setID(sd.getStringValue("ID"));
@@ -187,7 +188,7 @@ public class SimpleTimeseriesReader
       content.remove(0);
 
       // data points
-      while (content.size() > 0) {
+      while (!content.isEmpty()) {
 	line   = content.get(0).trim();
 	content.remove(0);
 	if (line.length() == 0)

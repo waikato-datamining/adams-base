@@ -15,7 +15,7 @@
 
 /*
  * GzipFileSearchHandler.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.core.io.filesearch;
@@ -84,7 +84,7 @@ public class GzipFileSearchHandler
 
     try {
       fis    = new FileInputStream(file);
-      cis    = new GZIPInputStream(fis);
+      cis    = new GZIPInputStream(fis, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
       isr    = new InputStreamReader(cis, m_Encoding.charsetValue());
       result = m_Handler.searchStream(isr, searchText, caseSensitive, handler);
     }

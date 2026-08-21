@@ -15,13 +15,14 @@
 
 /*
  *    SerializedObject.java
- *    Copyright (C) 2001-2024 University of Waikato, Hamilton, New Zealand
+ *    Copyright (C) 2001-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.core;
 
 import adams.core.io.FileUtils;
+import adams.core.io.GzipUtils;
 import adams.core.logging.LoggingHelper;
 
 import java.io.BufferedInputStream;
@@ -146,7 +147,7 @@ public class SerializedObject
       if (!m_isCompressed)
 	p = new ObjectInputStream(new BufferedInputStream(istream));
       else 
-	p = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(istream)));
+	p = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(istream, GzipUtils.BUFFER_SIZE_GZIPSTREAMS)));
       result = p.readObject();
       istream.close();
     }
