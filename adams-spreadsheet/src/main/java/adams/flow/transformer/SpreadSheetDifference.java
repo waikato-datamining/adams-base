@@ -20,18 +20,13 @@
 
 package adams.flow.transformer;
 
+import adams.core.MessageCollection;
 import adams.core.QuickInfoHelper;
 import adams.core.annotation.DeprecatedClass;
-import adams.data.spreadsheet.Cell;
-import adams.data.spreadsheet.Row;
-import adams.data.spreadsheet.RowIdentifier;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
 import adams.flow.core.Token;
 import adams.flow.transformer.multispreadsheetoperation.Difference;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -52,34 +47,34 @@ import java.util.Set;
  *
  <!-- options-start -->
  * Valid options are: <br><br>
- * 
+ *
  * <pre>-D &lt;int&gt; (property: debugLevel)
  * &nbsp;&nbsp;&nbsp;The greater the number the more additional info the scheme may output to 
  * &nbsp;&nbsp;&nbsp;the console (0 = off).
  * &nbsp;&nbsp;&nbsp;default: 0
  * &nbsp;&nbsp;&nbsp;minimum: 0
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetDifference
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseText&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  * <pre>-skip (property: skip)
  * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
  * &nbsp;&nbsp;&nbsp;as it is.
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow gets stopped in case this actor encounters an error;
  * &nbsp;&nbsp;&nbsp; useful for critical actors.
  * </pre>
- * 
+ *
  * <pre>-key-columns &lt;adams.core.Range&gt; (property: keyColumns)
  * &nbsp;&nbsp;&nbsp;The columns to use as keys for identifying rows in the spreadsheets, if 
  * &nbsp;&nbsp;&nbsp;empty the row index is used instead; A range is a comma-separated list of 
@@ -88,7 +83,7 @@ import java.util.Set;
  * &nbsp;&nbsp;&nbsp; first, second, third, last_2, last_1, last
  * &nbsp;&nbsp;&nbsp;default: 
  * </pre>
- * 
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -104,12 +99,6 @@ public class SpreadSheetDifference
 
   /** the range of column indices to use as key for identifying a row. */
   protected SpreadSheetColumnRange m_KeyColumns;
-  
-  /** for locating the rows. */
-  protected RowIdentifier[] m_Rows;
-  
-  /** the column indices to use. */
-  protected int[] m_ColIndices;
 
   /**
    * Returns a string describing the object.
@@ -118,8 +107,8 @@ public class SpreadSheetDifference
    */
   @Override
   public String globalInfo() {
-    return 
-	"Computes the difference of the numeric cells between two spreadsheets.\n"
+    return
+      "Computes the difference of the numeric cells between two spreadsheets.\n"
 	+ "The values of the second spreadsheet are subtracted from the first one.\n"
 	+ "If no 'key' columns are defined, the current order of rows is used "
 	+ "for comparison.";
@@ -133,17 +122,17 @@ public class SpreadSheetDifference
     super.defineOptions();
 
     m_OptionManager.add(
-	    "key-columns", "keyColumns",
-	    new SpreadSheetColumnRange(""));
+      "key-columns", "keyColumns",
+      new SpreadSheetColumnRange(""));
   }
-  
+
   /**
-   * 
+   *
    */
   @Override
   protected void initialize() {
     super.initialize();
-    
+
     m_KeyColumns = new SpreadSheetColumnRange();
   }
 
@@ -184,7 +173,7 @@ public class SpreadSheetDifference
    */
   public String keyColumnsTipText() {
     return
-        "The columns to use as keys for identifying rows in the spreadsheets, if empty the row index is used instead; " + m_KeyColumns.getExample();
+      "The columns to use as keys for identifying rows in the spreadsheets, if empty the row index is used instead; " + m_KeyColumns.getExample();
   }
 
   /**
@@ -204,106 +193,7 @@ public class SpreadSheetDifference
   public Class[] generates() {
     return new Class[]{SpreadSheet.class};
   }
-  
-  /**
-   * Initializes the row lookup, if necessary.
-   * 
-   * @param sheets	the sheets to generated lookup for
-   */
-  protected void initRowLookup(SpreadSheet[] sheets) {
-    if (m_Rows != null)
-      return;
 
-    m_Rows       = new RowIdentifier[2];
-    m_ColIndices = new int[0];
-
-    if (m_KeyColumns.getRange().length() != 0) {
-      m_KeyColumns.setSpreadSheet(sheets[0]);
-      m_ColIndices = m_KeyColumns.getIntIndices();
-      m_Rows[0]    = new RowIdentifier(m_KeyColumns);
-      m_Rows[1]    = new RowIdentifier(m_KeyColumns);
-      m_Rows[0].identify(sheets[0]);
-      m_Rows[1].identify(sheets[1]);
-    }
-  }
-    
-  /**
-   * Computes the difference between the two rows: actual difference is
-   * computed for numeric cells. If cells are strings, then the results is
-   * a missing value in case of differing strings, otherwise the same.
-   * 
-   * @param output	the spreadsheet the new row will get added to
-   * @param row1	the row from the first sheet
-   * @param row2	the row from the second sheet
-   * @return		the generated difference
-   */
-  protected Row difference(SpreadSheet output, Row row1, Row row2) {
-    Row			result;
-    Cell		cell1;
-    Cell		cell2;
-    int			index;
-    Set<Integer> 	indices;
-    int			numCols;
-
-    result = row1.getClone(output);
-    result.clear();
-    
-    indices = new HashSet<>();
-    for (int i: m_ColIndices)
-      indices.add(m_ColIndices[i]);
-
-    numCols = row1.getOwner().getColumnCount();
-    for (index = 0; index < numCols; index++) {
-      cell1 = row1.getCell(index);
-      cell2 = row2.getCell(index);
-      if (indices.contains(index)) {
-	result.addCell(index).setContent(cell1.getContent());
-      }
-      else if ((cell1 == null) || (cell2 == null)) {
-	result.addCell(index).setContent(SpreadSheet.MISSING_VALUE);
-      }
-      else if (cell1.isMissing() || cell2.isMissing()) {
-	result.addCell(index).setContent(SpreadSheet.MISSING_VALUE);
-      }
-      else if (cell1.isNumeric() && cell2.isNumeric()){
-	result.addCell(index).setContent(cell1.toDouble() - cell2.toDouble());
-      }
-      else {
-	if (cell1.getContent().equals(cell2.getContent()))
-	  result.addCell(index).setContent(cell1.getContent());
-	else
-	  result.addCell(index).setContent(SpreadSheet.MISSING_VALUE);
-      }
-    }
-    
-    return result;
-  }
-
-  /**
-   * Generates a row and appends it to the output.
-   * 
-   * @param output	the spreadsheet to receive the output
-   * @Param rowDiff	the difference row
-   */
-  protected void generateOutputRow(SpreadSheet output, Row rowDiff) {
-    Row		rowNew;
-    Row		header;
-    int		n;
-    String	key;
-
-    header = output.getHeaderRow();
-    rowNew = output.addRow();
-    if (rowDiff != null) {
-      for (n = 0; n < header.getCellCount(); n++) {
-	key = header.getCellKey(n);
-	if (rowDiff.hasCell(key) && !rowDiff.getCell(key).isMissing())
-	  rowNew.addCell(key).setContent(rowDiff.getCell(key).getContent());
-	else
-	  rowNew.addCell(key).setContent(SpreadSheet.MISSING_VALUE);
-      }
-    }
-  }
-  
   /**
    * Executes the flow item.
    *
@@ -314,45 +204,22 @@ public class SpreadSheetDifference
     String		result;
     SpreadSheet[]	sheets;
     SpreadSheet		output;
-    Row			row1;
-    Row			row2;
-    int			n;
+    Difference		diff;
+    MessageCollection	errors;
 
     result = null;
     sheets = (SpreadSheet[]) m_InputToken.getPayload();
-    m_Rows = null;
-    
-    if (sheets.length != 2)
-      result = "Expected two spreadsheets, received: " + sheets.length;
+    errors = new MessageCollection();
+    diff   = new Difference();
+    diff.setKeyColumns(m_KeyColumns.getClone());
+    diff.setLoggingLevel(getLoggingLevel());
+    output = diff.process(sheets, errors);
 
-    if (result == null) {
-      output = sheets[0].getHeader();
-      initRowLookup(sheets);
-      if (m_ColIndices.length > 0) {
-	for (String key: m_Rows[0].getKeys()) {
-	  row1 = sheets[0].getRow(m_Rows[0].getRows(key).get(0));
-	  row2 = null;
-	  if (m_Rows[1].getRows(key) != null)
-	    row2 = sheets[1].getRow(m_Rows[1].getRows(key).get(0));
-	  if (row2 != null)
-	    generateOutputRow(output, difference(output, row1, row2));
-	}
-      }
-      else {
-	for (n = 0; n < sheets[0].getRowCount() && n < sheets[1].getRowCount(); n++) {
-	  row1 = sheets[0].getRow(n);
-	  row2 = sheets[1].getRow(n);
-	  generateOutputRow(output, difference(output, row1, row2));
-	}
-      }
-
+    if (!errors.isEmpty())
+      result = errors.toString();
+    else
       m_OutputToken = new Token(output);
-    }
-    
-    // clean up
-    m_Rows       = null;
-    m_ColIndices = null;
-    
+
     return result;
   }
 }
