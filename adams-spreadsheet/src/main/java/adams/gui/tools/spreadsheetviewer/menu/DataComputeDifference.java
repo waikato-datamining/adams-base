@@ -15,13 +15,14 @@
 
 /*
  * DataComputeDifference.java
- * Copyright (C) 2014-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer.menu;
 
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetColumnRange;
-import adams.flow.transformer.SpreadSheetDifference;
+import adams.flow.transformer.MultiSpreadSheetOperation;
+import adams.flow.transformer.multispreadsheetoperation.Difference;
 import adams.gui.core.BaseComboBox;
 import adams.gui.core.BaseTextField;
 import adams.gui.core.GUIHelper;
@@ -59,14 +60,18 @@ public class DataComputeDifference
    * Computes the difference between the two sheets and inserts it as new tab.
    */
   protected void computeDifference(SpreadSheet sheet1, SpreadSheet sheet2, SpreadSheetColumnRange keyCols) {
-    SpreadSheetDifference	filter;
+    MultiSpreadSheetOperation 	op;
+    Difference			diff;
 
     if ((sheet1 == null) || (sheet2 == null))
       return;
 
-    filter = new SpreadSheetDifference();
-    filter.setKeyColumns(keyCols);
-    m_State.filterData(getTabbedPane().newTitle(), new SpreadSheet[]{sheet1, sheet2}, filter);
+    diff = new Difference();
+    diff.setKeyColumns(keyCols);
+    op = new MultiSpreadSheetOperation();
+    op.setOperation(diff);
+
+    m_State.filterData(getTabbedPane().newTitle(), new SpreadSheet[]{sheet1, sheet2}, op);
   }
 
   /**
