@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetDifference.java
- * Copyright (C) 2012-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -31,6 +31,7 @@ import adams.flow.core.Token;
 import adams.flow.transformer.multispreadsheetoperation.Difference;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  <!-- globalinfo-start -->
@@ -241,36 +242,37 @@ public class SpreadSheetDifference
     Cell		cell1;
     Cell		cell2;
     int			index;
-    HashSet<Integer>	indices;
-    
+    Set<Integer> 	indices;
+    int			numCols;
+
     result = row1.getClone(output);
     result.clear();
     
-    indices = new HashSet<Integer>();
+    indices = new HashSet<>();
     for (int i: m_ColIndices)
       indices.add(m_ColIndices[i]);
-    
-    for (String key: row1.cellKeys()) {
-      index = row1.getOwner().getHeaderRow().indexOf(key);
-      cell1 = row1.getCell(key);
-      cell2 = row2.getCell(key);
+
+    numCols = row1.getOwner().getColumnCount();
+    for (index = 0; index < numCols; index++) {
+      cell1 = row1.getCell(index);
+      cell2 = row2.getCell(index);
       if (indices.contains(index)) {
-	result.addCell(key).setContent(cell1.getContent());
+	result.addCell(index).setContent(cell1.getContent());
       }
       else if ((cell1 == null) || (cell2 == null)) {
-	result.addCell(key).setContent(SpreadSheet.MISSING_VALUE);
+	result.addCell(index).setContent(SpreadSheet.MISSING_VALUE);
       }
       else if (cell1.isMissing() || cell2.isMissing()) {
-	result.addCell(key).setContent(SpreadSheet.MISSING_VALUE);
+	result.addCell(index).setContent(SpreadSheet.MISSING_VALUE);
       }
       else if (cell1.isNumeric() && cell2.isNumeric()){
-	result.addCell(key).setContent(cell1.toDouble() - cell2.toDouble());
+	result.addCell(index).setContent(cell1.toDouble() - cell2.toDouble());
       }
       else {
 	if (cell1.getContent().equals(cell2.getContent()))
-	  result.addCell(key).setContent(cell1.getContent());
+	  result.addCell(index).setContent(cell1.getContent());
 	else
-	  result.addCell(key).setContent(SpreadSheet.MISSING_VALUE);
+	  result.addCell(index).setContent(SpreadSheet.MISSING_VALUE);
       }
     }
     
@@ -320,14 +322,8 @@ public class SpreadSheetDifference
     sheets = (SpreadSheet[]) m_InputToken.getPayload();
     m_Rows = null;
     
-    if (sheets.length != 2) {
+    if (sheets.length != 2)
       result = "Expected two spreadsheets, received: " + sheets.length;
-    }
-    else {
-      result = sheets[0].equalsHeader(sheets[0]);
-      if (result != null)
-	result = "Spreadsheets not compatible: " + result;
-    }
 
     if (result == null) {
       output = sheets[0].getHeader();

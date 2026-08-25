@@ -15,7 +15,7 @@
 
 /*
  * Difference.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer.multispreadsheetoperation;
@@ -91,6 +91,7 @@ public class Difference
     Row			result;
     Cell		cell1;
     Cell		cell2;
+    int			numCols;
     int			index;
     Set<Integer> 	indices;
 
@@ -101,27 +102,27 @@ public class Difference
     for (int i: m_ColIndices)
       indices.add(m_ColIndices[i]);
 
-    for (String key: row1.cellKeys()) {
-      index = row1.getOwner().getHeaderRow().indexOf(key);
-      cell1 = row1.getCell(key);
-      cell2 = row2.getCell(key);
+    numCols = row1.getOwner().getColumnCount();
+    for (index = 0; index < numCols; index++) {
+      cell1 = row1.getCell(index);
+      cell2 = row2.getCell(index);
       if (indices.contains(index)) {
-        result.addCell(key).setContent(cell1.getContent());
+        result.addCell(index).setContent(cell1.getContent());
       }
       else if ((cell1 == null) || (cell2 == null)) {
-        result.addCell(key).setContent(SpreadSheet.MISSING_VALUE);
+        result.addCell(index).setContent(SpreadSheet.MISSING_VALUE);
       }
       else if (cell1.isMissing() || cell2.isMissing()) {
-        result.addCell(key).setContent(SpreadSheet.MISSING_VALUE);
+        result.addCell(index).setContent(SpreadSheet.MISSING_VALUE);
       }
       else if (cell1.isNumeric() && cell2.isNumeric()){
-        result.addCell(key).setContent(cell1.toDouble() - cell2.toDouble());
+        result.addCell(index).setContent(cell1.toDouble() - cell2.toDouble());
       }
       else {
         if (cell1.getContent().equals(cell2.getContent()))
-          result.addCell(key).setContent(cell1.getContent());
+          result.addCell(index).setContent(cell1.getContent());
         else
-          result.addCell(key).setContent(SpreadSheet.MISSING_VALUE);
+          result.addCell(index).setContent(SpreadSheet.MISSING_VALUE);
       }
     }
 
