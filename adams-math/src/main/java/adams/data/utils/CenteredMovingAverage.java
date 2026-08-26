@@ -88,7 +88,7 @@ public class CenteredMovingAverage {
     for (i = left + 1; i < points.length - (right + 1); i++) {
       System.arraycopy(points, i - left, data, 0, window);
       result[i] = StatUtils.sum(data) / window;
-      if (debug && (i == left+1) || (i+1 == points.length - (right + 1)))
+      if (debug && ((i == left+1) || (i+1 == points.length - (right + 1))))
 	System.out.println(i + ": " + Utils.arrayToString(data) + " = " + result[i]);
     }
 
