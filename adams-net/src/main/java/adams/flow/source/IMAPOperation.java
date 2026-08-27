@@ -211,6 +211,9 @@ public class IMAPOperation
       }
       catch (Exception e) {
 	result = handleException("Failed to execute IMAP operation: " + m_Operation, e);
+	// let's see whether reinitializing the session fixes the problem
+	if (m_Connection != null)
+	  m_Connection.closeImapSession();
       }
     }
 
