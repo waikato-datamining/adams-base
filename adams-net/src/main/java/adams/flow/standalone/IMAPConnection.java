@@ -300,7 +300,7 @@ public class IMAPConnection
   protected void reset() {
     super.reset();
 
-    closeImap();
+    closeImapSession();
   }
 
   /**
@@ -846,7 +846,7 @@ public class IMAPConnection
   /**
    * Closes the image connection.
    */
-  protected void closeImap() {
+  public synchronized void closeImapSession() {
     if (m_ImapSession != null) {
       try {
 	m_ImapSession.close();
@@ -866,6 +866,6 @@ public class IMAPConnection
   @Override
   public void wrapUp() {
     super.wrapUp();
-    closeImap();
+    closeImapSession();
   }
 }
