@@ -15,7 +15,7 @@
 
 /*
  * OutlierDetector.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -27,7 +27,10 @@ import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
 import adams.data.outlier.AbstractOutlierDetector;
 import adams.data.outlier.PassThrough;
+import adams.db.DatabaseConnectionHandler;
+import adams.db.DatabaseConnectionUser;
 import adams.flow.container.OutlierDetectorContainer;
+import adams.flow.core.ActorUtils;
 import adams.flow.core.Token;
 
 import java.util.List;
@@ -104,7 +107,7 @@ import java.util.List;
  */
 public class OutlierDetector
   extends AbstractTransformer
-  implements InPlaceProcessing {
+  implements InPlaceProcessing, DatabaseConnectionUser {
 
   private static final long serialVersionUID = 6697547899481901585L;
 
@@ -119,6 +122,9 @@ public class OutlierDetector
 
   /** whether to skip creating a copy of the container. */
   protected boolean m_NoCopy;
+
+  /** whether the database connection has been updated. */
+  protected boolean m_DatabaseConnectionUpdated;
 
   /**
    * Returns a string describing the object.
@@ -154,6 +160,16 @@ public class OutlierDetector
     m_OptionManager.add(
       "no-copy", "noCopy",
       false);
+  }
+
+  /**
+   * Resets the scheme.
+   */
+  @Override
+  protected void reset() {
+    super.reset();
+
+    m_DatabaseConnectionUpdated = false;
   }
 
   /**
@@ -297,6 +313,18 @@ public class OutlierDetector
   }
 
   /**
+   * Determines the database connection in the flow.
+   *
+   * @return		the database connection to use
+   */
+  protected adams.db.AbstractDatabaseConnection getDatabaseConnection() {
+    return ActorUtils.getDatabaseConnection(
+      this,
+      adams.flow.standalone.DatabaseConnectionProvider.class,
+      adams.db.DatabaseConnection.getSingleton());
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -340,6 +368,12 @@ public class OutlierDetector
       input = m_InputToken.getPayload(DataContainer.class);
     else
       result = m_InputToken.unhandledData();
+
+    if (!m_DatabaseConnectionUpdated) {
+      m_DatabaseConnectionUpdated = true;
+      if (m_Detector instanceof DatabaseConnectionHandler)
+	((DatabaseConnectionHandler) m_Detector).setDatabaseConnection(getDatabaseConnection());
+    }
 
     try {
       detections = m_Detector.detect(input);
