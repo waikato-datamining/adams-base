@@ -15,7 +15,7 @@
 
 /*
  * AbstractMerge.java
- * Copyright (C) 2019 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer.wekadatasetsmerge;
@@ -42,15 +42,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 /**
- <!-- globalinfo-start -->
- <!-- globalinfo-end -->
- * <p>
- <!-- flow-summary-start -->
- <!-- flow-summary-end -->
- * <p>
- <!-- options-start -->
- <!-- options-end -->
- * <p>
  * Ancestor for merge schemes.
  *
  * @author Corey Sterling (csterlin at waikato dot ac dot nz)
@@ -529,6 +520,8 @@ public abstract class AbstractMerge
       // Add the completed instance to the merged dataset
       mergedDataset.add(mergedInstance);
     }
+
+    resetInternalState(null);
 
     // Return the resulting merged dataset
     return mergedDataset;
