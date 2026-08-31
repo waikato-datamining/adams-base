@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * XMLHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.previewbrowser;
 
 import adams.core.Utils;
+import adams.core.XMLUtils;
 import adams.gui.core.TextEditorPanel;
 import adams.gui.core.dom.DOMTreeWithPreview;
 import org.w3c.dom.Document;
@@ -45,7 +46,6 @@ import java.io.File;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class XMLHandler
   extends AbstractContentHandler {
@@ -91,6 +91,7 @@ public class XMLHandler
 
     try {
       factory  = DocumentBuilderFactory.newInstance();
+      XMLUtils.secureFactory(factory);
       builder  = factory.newDocumentBuilder();
       doc      = builder.parse(new File(file.getAbsolutePath()));
       domPanel = new DOMTreeWithPreview();

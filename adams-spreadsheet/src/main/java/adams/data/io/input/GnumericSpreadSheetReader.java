@@ -19,6 +19,7 @@
  */
 package adams.data.io.input;
 
+import adams.core.XMLUtils;
 import adams.core.io.GzipUtils;
 import adams.core.logging.LoggingHelper;
 import adams.data.io.output.GnumericSpreadSheetWriter;
@@ -413,6 +414,7 @@ public class GnumericSpreadSheetReader
 	in = new GZIPInputStream(in, GzipUtils.BUFFER_SIZE_GZIPSTREAMS);
 
       dbFactory = DocumentBuilderFactory.newInstance();
+      XMLUtils.secureFactory(dbFactory);
       dBuilder  = dbFactory.newDocumentBuilder();
       doc       = dBuilder.parse(in);    
       doc.getDocumentElement().normalize();

@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * NewDOMDocument.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.flow.source;
 
+import adams.core.XMLUtils;
 import adams.flow.core.Token;
 import org.w3c.dom.Document;
 
@@ -113,6 +114,7 @@ public class NewDOMDocument
 
     try {
       factory       = DocumentBuilderFactory.newInstance();
+      XMLUtils.secureFactory(factory);
       builder       = factory.newDocumentBuilder();
       doc           = builder.newDocument();
       m_OutputToken = new Token(doc);

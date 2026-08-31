@@ -13,13 +13,14 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * XSLTPanel.java
- * Copyright (C) 2017 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools;
 
+import adams.core.XMLUtils;
 import adams.core.io.FileUtils;
 import adams.gui.chooser.BaseFileChooser;
 import adams.gui.core.BaseButton;
@@ -56,7 +57,6 @@ import java.io.StringReader;
  * Panel for performing XSLT on XML.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class XSLTPanel
   extends BasePanel
@@ -259,12 +259,6 @@ public class XSLTPanel
   /** the menu item for namespace aware. */
   protected JCheckBoxMenuItem m_MenuItemNamespaceAware;
 
-  /** the menu item for XInclude aware. */
-  protected JCheckBoxMenuItem m_MenuItemXInludeAware;
-
-  /** the menu item for expanding entity references. */
-  protected JCheckBoxMenuItem m_MenuItemExpandEntityReferences;
-
   /** the menu item for ignoring comments. */
   protected JCheckBoxMenuItem m_MenuItemIgnoreComments;
 
@@ -354,16 +348,6 @@ public class XSLTPanel
       menu.add(menuitem);
       m_MenuItemNamespaceAware = (JCheckBoxMenuItem) menuitem;
 
-      // Options/XInclude aware
-      menuitem = new JCheckBoxMenuItem("XInclude aware");
-      menu.add(menuitem);
-      m_MenuItemXInludeAware = (JCheckBoxMenuItem) menuitem;
-
-      // Options/Expand entity references
-      menuitem = new JCheckBoxMenuItem("Expand entity references");
-      menu.add(menuitem);
-      m_MenuItemExpandEntityReferences = (JCheckBoxMenuItem) menuitem;
-
       // Options/Ignoring comments
       menuitem = new JCheckBoxMenuItem("Ignoring comments");
       menuitem.setSelected(true);
@@ -398,10 +382,9 @@ public class XSLTPanel
       factory = DocumentBuilderFactory.newInstance();
       factory.setValidating(m_MenuItemValidating.isSelected());
       factory.setNamespaceAware(m_MenuItemNamespaceAware.isSelected());
-      factory.setXIncludeAware(m_MenuItemXInludeAware.isSelected());
-      factory.setExpandEntityReferences(m_MenuItemExpandEntityReferences.isSelected());
       factory.setIgnoringComments(m_MenuItemIgnoreComments.isSelected());
       factory.setIgnoringElementContentWhitespace(m_MenuItemIgnoreWhitespaces.isSelected());
+      XMLUtils.secureFactory(factory);
       builder     = factory.newDocumentBuilder();
       doc         = builder.parse(new ByteArrayInputStream(m_PanelXML.getContent().getBytes()));
       dsource     = new DOMSource(doc);

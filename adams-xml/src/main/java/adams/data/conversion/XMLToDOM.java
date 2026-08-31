@@ -13,12 +13,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * XMLToDOM.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
+import adams.core.XMLUtils;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -78,7 +79,6 @@ import java.io.ByteArrayInputStream;
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class XMLToDOM
   extends AbstractConversionFromString {
@@ -92,12 +92,6 @@ public class XMLToDOM
   /** whether the parser is namespace aware. */
   protected boolean m_NameSpaceAware;
 
-  /** Set state of XInclude processing.*/
-  protected boolean m_XIncludeAware;
-  
-  /** Specifies that the parser produced by this code will expand entity reference nodes. */
-  protected boolean m_ExpandEntityReferences;
-  
   /** Specifies that the parser produced by this code will ignore comments. */
   protected boolean m_IgnoringComments;
   
@@ -131,14 +125,6 @@ public class XMLToDOM
 
     m_OptionManager.add(
 	    "name-space-aware", "nameSpaceAware",
-	    false);
-
-    m_OptionManager.add(
-	    "x-include-aware", "XIncludeAware",
-	    false);
-
-    m_OptionManager.add(
-	    "expand-entity-references", "expandEntityReferences",
 	    false);
 
     m_OptionManager.add(
@@ -210,64 +196,6 @@ public class XMLToDOM
    */
   public String nameSpaceAwareTipText() {
     return "If enabled, the parser will be namespace aware.";
-  }
-
-  /**
-   * Sets whether to use a X-include aware parser.
-   *
-   * @param value	true if to use X-include aware parser
-   */
-  public void setXIncludeAware(boolean value) {
-    m_XIncludeAware = value;
-    reset();
-  }
-
-  /**
-   * Returns whether a X-include aware parser is used.
-   *
-   * @return 		true if X-include aware parser
-   */
-  public boolean getXIncludeAware() {
-    return m_XIncludeAware;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String XIncludeAwareTipText() {
-    return "If enabled, the parser will be X-include aware.";
-  }
-
-  /**
-   * Sets whether to expand entity references.
-   *
-   * @param value	true if to expand entity references
-   */
-  public void setExpandEntityReferences(boolean value) {
-    m_ExpandEntityReferences = value;
-    reset();
-  }
-
-  /**
-   * Returns whether a parser expands entity references.
-   *
-   * @return 		true if parser expands entity references
-   */
-  public boolean getExpandEntityReferences() {
-    return m_ExpandEntityReferences;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String expandEntityReferencesTipText() {
-    return "If enabled, the parser will expand entity references.";
   }
 
   /**
@@ -385,10 +313,9 @@ public class XMLToDOM
       factory = DocumentBuilderFactory.newInstance();
       factory.setValidating(m_Validating);
       factory.setNamespaceAware(m_NameSpaceAware);
-      factory.setXIncludeAware(m_XIncludeAware);
-      factory.setExpandEntityReferences(m_ExpandEntityReferences);
       factory.setIgnoringComments(m_IgnoringComments);
       factory.setIgnoringElementContentWhitespace(m_IgnoringWhitespace);
+      XMLUtils.secureFactory(factory);
       builder = factory.newDocumentBuilder();
       doc     = builder.parse(new ByteArrayInputStream(input.getBytes()));
     }
