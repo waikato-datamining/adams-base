@@ -31,7 +31,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class XMLUtils {
 
   /**
-   * Sets various features and settings to secure XML parsing.
+   * Sets various features and settings to secure XML parsing. See:
+   * <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html#java">https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html#java</a>
    *
    * @param factory	the factory instance to secure
    * @throws Exception	if setting of an option fails
