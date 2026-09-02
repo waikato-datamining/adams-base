@@ -15,7 +15,7 @@
 
 /*
  * Rotate.java
- * Copyright (C) 2018-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.objectfilter;
@@ -407,6 +407,8 @@ public class Rotate
     LocatedObject	newObj;
     int[]		xpoints;
     int[]		ypoints;
+    int[]		xpointsNew;
+    int[]		ypointsNew;
     int			i;
 
     result = new LocatedObjects();
@@ -423,11 +425,13 @@ public class Rotate
       if (obj.hasPolygon()) {
 	xpoints = obj.getPolygonX();
 	ypoints = obj.getPolygonY();
+	xpointsNew = new int[xpoints.length];
+	ypointsNew = new int[ypoints.length];
 	for (i = 0; i < xpoints.length; i++) {
-	  xpoints[i] = rotateX(xpoints[i], ypoints[i]);
-	  ypoints[i] = rotateY(xpoints[i], ypoints[i]);
+	  xpointsNew[i] = rotateX(xpoints[i], ypoints[i]);
+	  ypointsNew[i] = rotateY(xpoints[i], ypoints[i]);
 	}
-	newObj.setPolygon(new Polygon(xpoints, ypoints, xpoints.length));
+	newObj.setPolygon(new Polygon(xpointsNew, ypointsNew, xpointsNew.length));
       }
 
       result.add(newObj);
