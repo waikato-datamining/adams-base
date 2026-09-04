@@ -15,7 +15,7 @@
 
 /*
  * Branch.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.control;
@@ -261,7 +261,7 @@ public class Branch
   public String getQuickInfo() {
     String	result;
 
-    result  = QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads));
+    result  = QuickInfoHelper.toString(this, "numThreads", Performance.getNumThreadsQuickInfo(m_NumThreads, false, m_UseThreadCap));
     result += QuickInfoHelper.toString(this, "finishBeforeStopping", m_FinishBeforeStopping, "atomic execution", ", ");
 
     return result;

@@ -15,7 +15,7 @@
 
 /*
  * Performance.java
- * Copyright (C) 2008-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2008-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -172,6 +172,20 @@ public class Performance {
    * @return			the quick info string
    */
   public static String getNumThreadsQuickInfo(int numThreads, boolean suppressSequential) {
+    return getNumThreadsQuickInfo(numThreads, suppressSequential, false);
+  }
+
+  /**
+   * Returns a quick info string, interpreting the number of threads.
+   *
+   * @param numThreads		the number of threads to turn into a quick info string
+   * @param suppressSequential 	whether to suppress "sequential" string
+   * @param noThreadCap		whether there is no thread cap
+   * @return			the quick info string
+   */
+  public static String getNumThreadsQuickInfo(int numThreads, boolean suppressSequential, boolean noThreadCap) {
+    if (noThreadCap)
+      return "no thread limit, all cores";
     if (numThreads == 1)
       return suppressSequential ? "" : "sequential";
     if (numThreads == 0)
