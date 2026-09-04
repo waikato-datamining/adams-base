@@ -172,7 +172,7 @@ public class Performance {
    * @return			the quick info string
    */
   public static String getNumThreadsQuickInfo(int numThreads, boolean suppressSequential) {
-    return getNumThreadsQuickInfo(numThreads, suppressSequential, false);
+    return getNumThreadsQuickInfo(numThreads, suppressSequential, true);
   }
 
   /**
