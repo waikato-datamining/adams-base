@@ -180,11 +180,11 @@ public class Performance {
    *
    * @param numThreads		the number of threads to turn into a quick info string
    * @param suppressSequential 	whether to suppress "sequential" string
-   * @param noThreadCap		whether there is no thread cap
+   * @param useThreadCap	whether there is a thread cap or not
    * @return			the quick info string
    */
-  public static String getNumThreadsQuickInfo(int numThreads, boolean suppressSequential, boolean noThreadCap) {
-    if (noThreadCap)
+  public static String getNumThreadsQuickInfo(int numThreads, boolean suppressSequential, boolean useThreadCap) {
+    if (!useThreadCap)
       return "no thread limit, all cores";
     if (numThreads == 1)
       return suppressSequential ? "" : "sequential";
