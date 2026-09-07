@@ -15,9 +15,13 @@
 
 /*
  * PercentileTest.java
- * Copyright (C) 2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2018-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.rowstatistic;
+
+import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the Percentile statistic generator.
@@ -76,5 +80,24 @@ public class PercentileTest
 	1,
 	1,
     };
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(PercentileTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

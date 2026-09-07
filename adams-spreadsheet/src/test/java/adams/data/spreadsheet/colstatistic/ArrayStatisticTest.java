@@ -13,17 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ArrayStatisticTest.java
- * Copyright (C) 2017 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.colstatistic;
+
+import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the ArrayStatistic statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ArrayStatisticTest
   extends AbstractColumnStatisticTestCase {
@@ -76,5 +79,24 @@ public class ArrayStatisticTest
 	1,
 	2,
     };
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(ArrayStatisticTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }

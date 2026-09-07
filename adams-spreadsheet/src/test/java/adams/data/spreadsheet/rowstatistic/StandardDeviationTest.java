@@ -13,17 +13,20 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * StandardDeviationTest.java
- * Copyright (C) 2014 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2014-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.spreadsheet.rowstatistic;
+
+import adams.env.Environment;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the StandardDeviation statistic generator.
  * 
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision: 9765 $
  */
 public class StandardDeviationTest
   extends AbstractRowStatisticTestCase {
@@ -77,5 +80,24 @@ public class StandardDeviationTest
 	1,
 	8,
     };
+  }
+
+  /**
+   * Returns a test suite.
+   *
+   * @return		the test suite
+   */
+  public static Test suite() {
+    return new TestSuite(StandardDeviationTest.class);
+  }
+
+  /**
+   * Runs the test from commandline.
+   *
+   * @param args	ignored
+   */
+  public static void main(String[] args) {
+    Environment.setEnvironmentClass(Environment.class);
+    runTest(suite());
   }
 }
