@@ -1,0 +1,10 @@
+--> out-0.txt
+Host: localhost
+IP: 127.0.0.1
+Type: rejection
+Source: this is the source
+Status: New
+Message:
+Errors=Something went wrong
+
+
