@@ -42,7 +42,7 @@ public class ExtractID
 
   private static final long serialVersionUID = -2978040822861434285L;
 
-  /** the group extractor to use. */
+  /** the ID extractor to use. */
   protected IDExtractor m_Extractor;
 
   /**
