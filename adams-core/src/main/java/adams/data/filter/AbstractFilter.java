@@ -20,9 +20,15 @@
 
 package adams.data.filter;
 
+import adams.core.option.AbstractArgumentOption;
+import adams.core.option.AbstractOption;
 import adams.core.option.AbstractOptionConsumer;
 import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
+import adams.core.option.BooleanOption;
+import adams.core.option.ClassOption;
+import adams.core.option.OptionTraversalPath;
+import adams.core.option.OptionTraverser;
 import adams.core.option.OptionUtils;
 import adams.data.NotesHandler;
 import adams.data.container.DataContainer;
@@ -415,5 +421,46 @@ public abstract class AbstractFilter<T extends DataContainer>
    */
   public static Filter forCommandLine(String cmdline) {
     return (Filter) AbstractOptionConsumer.fromString(ArrayConsumer.class, cmdline);
+  }
+
+  /**
+   * Changes how the filter handles updating ID and processing info. Updates recursively.
+   *
+   * @param filter			the filter to update
+   * @param dontUpdateID		whether to stop updating the ID or not
+   * @param dontUpdateProcessingInfo	whether to stop updating the processing or not
+   */
+  public static void changeUpdateHandling(Filter filter, final boolean dontUpdateID, final boolean dontUpdateProcessingInfo) {
+    filter.getOptionManager().traverse(new OptionTraverser() {
+      @Override
+      public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
+	if (option.getOptionHandler() instanceof Filter) {
+	  if (option.getProperty().equals("dontUpdateID"))
+	    option.setCurrentValue(dontUpdateID);
+	  if (option.getProperty().equals("dontUpdateProcessingInfo"))
+	    option.setCurrentValue(dontUpdateProcessingInfo);
+	}
+      }
+      @Override
+      public void handleClassOption(ClassOption option, OptionTraversalPath path) {
+	// ignored
+      }
+      @Override
+      public void handleArgumentOption(AbstractArgumentOption option, OptionTraversalPath path) {
+	// ignored
+      }
+      @Override
+      public boolean canHandle(AbstractOption option) {
+	return true;
+      }
+      @Override
+      public boolean canRecurse(Class cls) {
+	return true;
+      }
+      @Override
+      public boolean canRecurse(Object obj) {
+	return true;
+      }
+    });
   }
 }
