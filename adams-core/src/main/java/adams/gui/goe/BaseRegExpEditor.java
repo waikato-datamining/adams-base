@@ -15,7 +15,7 @@
 
 /*
  * BaseRegExpEditor.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -165,7 +165,7 @@ public class BaseRegExpEditor
    * @return		the processed string
    */
   protected String unEscape(String s) {
-    if (m_CheckBoxEscapedInput.isSelected())
+    if ((m_CheckBoxEscapedInput != null) && m_CheckBoxEscapedInput.isSelected())
       return Utils.unbackQuoteChars(s);
     else
       return s;
