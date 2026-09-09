@@ -27,6 +27,7 @@ import adams.core.option.AbstractOptionHandler;
 import adams.core.option.ArrayConsumer;
 import adams.core.option.BooleanOption;
 import adams.core.option.ClassOption;
+import adams.core.option.OptionHandler;
 import adams.core.option.OptionTraversalPath;
 import adams.core.option.OptionTraverser;
 import adams.core.option.OptionUtils;
@@ -424,15 +425,15 @@ public abstract class AbstractFilter<T extends DataContainer>
   }
 
   /**
-   * Changes how the filter handles updating ID and processing info. Updates recursively.
+   * Changes how filters handle updating ID and processing info. Updates recursively.
    *
-   * @param filter			the filter to update
+   * @param obj				the nested object to update
    * @param dontUpdateID		whether to stop updating the ID or not
    * @param dontUpdateProcessingInfo	whether to stop updating the processing or not
    */
-  public static boolean changeUpdateHandling(Filter filter, final boolean dontUpdateID, final boolean dontUpdateProcessingInfo) {
+  public static boolean changeUpdateHandling(OptionHandler obj, final boolean dontUpdateID, final boolean dontUpdateProcessingInfo) {
     final boolean[] updated = new boolean[1];
-    filter.getOptionManager().traverse(new OptionTraverser() {
+    obj.getOptionManager().traverse(new OptionTraverser() {
       @Override
       public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
 	if (option.getOptionHandler() instanceof Filter) {
