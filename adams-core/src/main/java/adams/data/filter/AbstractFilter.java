@@ -430,15 +430,24 @@ public abstract class AbstractFilter<T extends DataContainer>
    * @param dontUpdateID		whether to stop updating the ID or not
    * @param dontUpdateProcessingInfo	whether to stop updating the processing or not
    */
-  public static void changeUpdateHandling(Filter filter, final boolean dontUpdateID, final boolean dontUpdateProcessingInfo) {
+  public static boolean changeUpdateHandling(Filter filter, final boolean dontUpdateID, final boolean dontUpdateProcessingInfo) {
+    final boolean[] updated = new boolean[1];
     filter.getOptionManager().traverse(new OptionTraverser() {
       @Override
       public void handleBooleanOption(BooleanOption option, OptionTraversalPath path) {
 	if (option.getOptionHandler() instanceof Filter) {
-	  if (option.getProperty().equals("dontUpdateID"))
-	    option.setCurrentValue(dontUpdateID);
-	  if (option.getProperty().equals("dontUpdateProcessingInfo"))
-	    option.setCurrentValue(dontUpdateProcessingInfo);
+	  if (option.getProperty().equals("dontUpdateID")) {
+	    if ((Boolean) option.getCurrentValue() != dontUpdateID) {
+	      option.setCurrentValue(dontUpdateID);
+	      updated[0] = true;
+	    }
+	  }
+	  if (option.getProperty().equals("dontUpdateProcessingInfo")) {
+	    if ((Boolean) option.getCurrentValue() != dontUpdateProcessingInfo) {
+	      option.setCurrentValue(dontUpdateProcessingInfo);
+	      updated[0] = true;
+	    }
+	  }
 	}
       }
       @Override
@@ -462,5 +471,6 @@ public abstract class AbstractFilter<T extends DataContainer>
 	return true;
       }
     });
+    return updated[0];
   }
 }
