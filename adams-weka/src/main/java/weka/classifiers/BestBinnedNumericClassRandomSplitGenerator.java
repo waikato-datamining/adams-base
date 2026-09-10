@@ -386,6 +386,8 @@ public class BestBinnedNumericClassRandomSplitGenerator
       distOverall  = calcDistribution(binnableInst, min);
       if (isLoggingEnabled())
         getLogger().info("Total distribution: " + Utils.arrayToString(distOverall));
+      if (isLoggingEnabled())
+	getLogger().info("# instances -> # bins: " + m_Data.size() + " -> " + binnableInst.size());
     }
     catch (Exception e) {
       throw new IllegalStateException("Failed to create binnable Instances!", e);

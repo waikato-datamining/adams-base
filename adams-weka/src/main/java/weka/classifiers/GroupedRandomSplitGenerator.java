@@ -371,6 +371,8 @@ public class GroupedRandomSplitGenerator
       binnableInst   = Wrapping.addTmpIndex(binnableInst);  // adding the original index
       groupedInst    = Grouping.groupAsList(binnableInst, new StringAttributeGroupExtractor(m_Index.getIntIndex(), m_RegExp.getValue(), m_Group));
       binnableGroups = Wrapping.wrap(groupedInst, new IndexedBinValueExtractor<>());  // wrap for split generator
+      if (isLoggingEnabled())
+	getLogger().info("# instances -> # groups: " + m_Data.size() + " -> " + binnableGroups.size());
     }
     catch (Exception e) {
       throw new IllegalStateException("Failed to create binnable Instances!", e);

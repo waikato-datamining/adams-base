@@ -463,6 +463,8 @@ public class GroupedCrossValidationFoldGenerator
       binnableInst     = Wrapping.addTmpIndex(binnableInst);  // adding the original index
       groupedInst      = Grouping.groupAsList(binnableInst, new StringAttributeGroupExtractor(m_Index.getIntIndex(), m_RegExp.getValue(), m_Group));
       m_BinnableGroups = Wrapping.wrap(groupedInst, new GroupedClassValueBinValueExtractor());  // wrap for CV generator
+      if (isLoggingEnabled())
+	getLogger().info("# instances -> # groups: " + m_Data.size() + " -> " + m_BinnableGroups.size());
     }
     catch (Exception e) {
       throw new IllegalStateException("Failed to create binnable Instances!", e);

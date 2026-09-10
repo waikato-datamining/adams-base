@@ -428,6 +428,8 @@ public class BinnedNumericClassCrossValidationFoldGenerator
     if (m_FoldPairs == null) {
       try {
 	binnableInst = BinnableInstances.toBinnableUsingClass(m_Data);
+	if (isLoggingEnabled())
+	  getLogger().info("# instances -> # bins: " + m_Data.size() + " -> " + binnableInst.size());
       }
       catch (Exception e) {
 	throw new IllegalStateException("Failed to create binnable Instances!", e);
