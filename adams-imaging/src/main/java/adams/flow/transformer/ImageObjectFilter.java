@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectFilter.java
- * Copyright (C) 2017-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2017-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -109,6 +109,12 @@ import adams.flow.transformer.locateobjects.LocatedObjects;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-clean-indices-offset &lt;int&gt; (property: cleanIndicesOffset)
+ * &nbsp;&nbsp;&nbsp;The offset to use for the indices when cleaning is enabled.
+ * &nbsp;&nbsp;&nbsp;default: 0
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
  * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
  * &nbsp;&nbsp;&nbsp;If enabled, no copy of the report&#47;report handler is created before processing
  * &nbsp;&nbsp;&nbsp;the report.
@@ -136,6 +142,9 @@ public class ImageObjectFilter
 
   /** whether to clean the object indices. */
   protected boolean m_CleanIndices;
+
+  /** the object index offset when cleaning. */
+  protected int m_CleanIndicesOffset;
 
   /** whether to skip creating a copy of the spreadsheet. */
   protected boolean m_NoCopy;
@@ -173,6 +182,10 @@ public class ImageObjectFilter
     m_OptionManager.add(
       "clean-indices", "cleanIndices",
       false);
+
+    m_OptionManager.add(
+      "clean-indices-offset", "cleanIndicesOffset",
+      0, 0, null);
 
     m_OptionManager.add(
       "no-copy", "noCopy",
@@ -301,6 +314,37 @@ public class ImageObjectFilter
   }
 
   /**
+   * Sets the index offset when cleaning the indices.
+   *
+   * @param value	the offset
+   */
+  public void setCleanIndicesOffset(int value) {
+    if (getOptionManager().isValid("cleanIndicesOffset", value)) {
+      m_CleanIndicesOffset = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the index offset when cleaning the indices.
+   *
+   * @return		the offset
+   */
+  public int getCleanIndicesOffset() {
+    return m_CleanIndicesOffset;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String cleanIndicesOffsetTipText() {
+    return "The offset to use for the indices when cleaning is enabled.";
+  }
+
+  /**
    * Sets whether to skip creating a copy of the report/report handler before updating the report.
    *
    * @param value	true if to skip creating copy
@@ -365,6 +409,8 @@ public class ImageObjectFilter
     result += QuickInfoHelper.toString(this, "filter", m_Filter, ", filter: ");
     result += QuickInfoHelper.toString(this, "keepAllObjects", m_KeepAllObjects, "keep all", ", ");
     result += QuickInfoHelper.toString(this, "cleanIndices", m_CleanIndices, "clean indices", ", ");
+    if (m_CleanIndices)
+      result += QuickInfoHelper.toString(this, "cleanIndicesOffset", m_CleanIndicesOffset, ", clean offset: ");
     result += QuickInfoHelper.toString(this, "noCopy", m_NoCopy, "no copy", ", ");
 
     return result;
@@ -412,7 +458,7 @@ public class ImageObjectFilter
 	objs = LocatedObjects.fromReport(report, m_Finder.getPrefix());
 
 	if (m_CleanIndices)
-	  objs.resetIndex();
+	  objs.resetIndex(m_CleanIndicesOffset);
 
 	// find objects of interest
 	indices = m_Finder.find(objs);
@@ -435,7 +481,10 @@ public class ImageObjectFilter
 	  otherObjs = objs.subset(indices, true);
 	  newObjs.addAll(otherObjs);
 	}
-	newReport = newObjs.toReport(m_Finder.getPrefix());
+	if (m_CleanIndices)
+	  newReport = newObjs.toReport(m_Finder.getPrefix(), m_CleanIndicesOffset);
+	else
+	  newReport = newObjs.toReport(m_Finder.getPrefix());
 	for (AbstractField field : newReport.getFields()) {
 	  report.addField(field);
 	  report.setValue(field, newReport.getValue(field));
