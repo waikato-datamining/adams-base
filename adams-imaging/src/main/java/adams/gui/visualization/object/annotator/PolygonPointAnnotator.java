@@ -24,6 +24,7 @@ import adams.core.Utils;
 import adams.data.geometry.PolygonUtils;
 import adams.data.report.Report;
 import adams.data.statistics.StatUtils;
+import adams.flow.transformer.locateobjects.GeometryUtils;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.MouseUtils;
 import adams.gui.visualization.image.SelectionRectangle;
@@ -334,6 +335,15 @@ public class PolygonPointAnnotator
 
     modified = false;
     if (!m_Locations.contains(rect)) {
+      poly = PolygonUtils.toPolygon(m_Points);
+
+      // ignore self-intersecting polygons
+      if (GeometryUtils.selfIntersects(poly)) {
+	getLogger().severe("Self-intersecting polygons are not accepted!");
+	getOwner().update();
+	return;
+      }
+
       modified  = true;
       lastIndex = findLastIndex(report);
       rect.setIndex(lastIndex + 1);
@@ -342,7 +352,7 @@ public class PolygonPointAnnotator
       report.setNumericValue(current + LocatedObjects.KEY_Y, bbox.y);
       report.setNumericValue(current + LocatedObjects.KEY_WIDTH, bbox.width);
       report.setNumericValue(current + LocatedObjects.KEY_HEIGHT, bbox.height);
-      poly = PolygonUtils.toPolygon(m_Points);
+
       report.setStringValue(current + LocatedObjects.KEY_POLY_X, Utils.flatten(StatUtils.toNumberArray(poly.xpoints), ","));
       report.setStringValue(current + LocatedObjects.KEY_POLY_Y, Utils.flatten(StatUtils.toNumberArray(poly.ypoints), ","));
       if (hasCurrentLabel())

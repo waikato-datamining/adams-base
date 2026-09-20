@@ -23,6 +23,7 @@ package adams.gui.visualization.object.annotator;
 import adams.core.Utils;
 import adams.data.report.Report;
 import adams.data.statistics.StatUtils;
+import adams.flow.transformer.locateobjects.GeometryUtils;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.visualization.image.SelectionRectangle;
 
@@ -314,6 +315,7 @@ public class PolygonAnnotator
             m_Dragged     = false;
             m_SelectionTo = e.getPoint();
             processSelection(e.getModifiersEx());
+	    m_SelectionTrace.clear();
           }
         }
       }
@@ -369,7 +371,7 @@ public class PolygonAnnotator
     Point	last;
     double	dist;
 
-    if (m_SelectionTrace.size() == 0)
+    if (m_SelectionTrace.isEmpty())
       return true;
 
     last = m_SelectionTrace.get(m_SelectionTrace.size() - 1);
@@ -392,7 +394,7 @@ public class PolygonAnnotator
 
     result = null;
 
-    if (m_SelectionTrace.size() > 0) {
+    if (!m_SelectionTrace.isEmpty()) {
       poly_x = new int[m_SelectionTrace.size()];
       poly_y = new int[m_SelectionTrace.size()];
       for (i = 0; i < m_SelectionTrace.size(); i++) {
@@ -429,7 +431,7 @@ public class PolygonAnnotator
     Rectangle 			bounds;
     String			comment;
 
-    if (m_SelectionTrace.size() == 0)
+    if (m_SelectionTrace.isEmpty())
       return;
 
     comment = "";
@@ -449,6 +451,13 @@ public class PolygonAnnotator
     // ignore empty rectangles (which can occur with a stylus)
     if ((w == 0) || (h == 0))
       return;
+
+    // ignore self-intersecting polygons
+    if (GeometryUtils.selfIntersects(poly)) {
+      getLogger().severe("Self-intersecting polygons are not accepted!");
+      getOwner().update();
+      return;
+    }
 
     queue    = new ArrayList<>();
     modified = false;
@@ -524,7 +533,7 @@ public class PolygonAnnotator
     Polygon	poly;
     float	width;
 
-    if (m_SelectionTrace.size() == 0)
+    if (m_SelectionTrace.isEmpty())
       return;
 
     width = getStrokeWidth(g, 1.0f);
