@@ -39,6 +39,7 @@ public class SelfIntersectingPolygons
    */
   public enum Action {
     FLAG,
+    FLAG_ALL,
     REMOVE,
   }
 
@@ -100,7 +101,7 @@ public class SelfIntersectingPolygons
    * 			displaying in the GUI or for listing the options.
    */
   public String actionTipText() {
-    return "The action to perform; in case of " + Action.FLAG + ", a boolean field is added to all objects with polygons.";
+    return "The action to perform; in case of " + Action.FLAG_ALL + ", a boolean field is added to all objects with polygons, using " + Action.FLAG + " only when self-intersection detected.";
   }
 
   /**
@@ -156,6 +157,11 @@ public class SelfIntersectingPolygons
       intersects = GeometryUtils.selfIntersects(obj.getPolygon());
       switch (m_Action) {
 	case FLAG:
+	  if (intersects)
+	    obj.getMetaData().put(m_Field, true);
+	  result.add(obj);
+	  break;
+	case FLAG_ALL:
 	  obj.getMetaData().put(m_Field, intersects);
 	  result.add(obj);
 	  break;
