@@ -15,7 +15,7 @@
 
 /*
  * ImageObjectAnnotator.java
- * Copyright (C) 2020-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
@@ -1169,6 +1169,7 @@ public class ImageObjectAnnotator
       m_PanelObjectAnnotation.preselectCurrentLabel(m_PreviousLabel);
     }
     m_PanelObjectAnnotation.addAnnotationChangeListener(m_ChangeListenerAnnotations);
+
     // ensure that tool is active and ready to use
     if (m_FirstInteraction) {
       if (m_PanelObjectAnnotation.getActiveTool() != null) {
@@ -1177,6 +1178,10 @@ public class ImageObjectAnnotator
 	m_PanelObjectAnnotation.getActiveTool().activate();
       }
     }
+
+    // ensure that check is being applied to existing annotations
+    checkAnnotations();
+
     m_Dialog.setVisible(true);
     deregisterWindow(m_Dialog);
     m_PanelObjectAnnotation.removeAnnotationChangeListener(m_ChangeListenerAnnotations);
