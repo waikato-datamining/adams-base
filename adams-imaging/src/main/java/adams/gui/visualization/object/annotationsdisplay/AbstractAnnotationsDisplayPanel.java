@@ -15,12 +15,14 @@
 
 /*
  * AbstractAnnotationsDisplayPanel.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotationsdisplay;
 
 import adams.core.CleanUpHandler;
+import adams.data.objectfilter.ObjectFilter;
+import adams.data.objectfilter.PassThrough;
 import adams.data.report.Report;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import adams.gui.core.BasePanel;
@@ -42,7 +44,10 @@ public abstract class AbstractAnnotationsDisplayPanel
 
   /** the prefix to use. */
   protected String m_Prefix;
-
+  
+  /** the object filter to apply to the report/objects. */
+  protected ObjectFilter m_ObjectFilter;
+  
   /**
    * Initializes the members.
    */
@@ -50,8 +55,9 @@ public abstract class AbstractAnnotationsDisplayPanel
   protected void initialize() {
     super.initialize();
 
-    m_Owner  = null;
-    m_Prefix = AbstractAnnotationsDisplayGenerator.PREFIX_DEFAULT;
+    m_Owner        = null;
+    m_Prefix       = AbstractAnnotationsDisplayGenerator.PREFIX_DEFAULT;
+    m_ObjectFilter = new PassThrough();
   }
 
   /**
@@ -88,6 +94,55 @@ public abstract class AbstractAnnotationsDisplayPanel
    */
   public String getPrefix() {
     return m_Prefix;
+  }
+
+  /**
+   * Sets the object filter to use.
+   *
+   * @param value	the filter
+   */
+  public void setObjectFilter(ObjectFilter value) {
+    m_ObjectFilter = value;
+  }
+
+  /**
+   * Returns the object filter in use.
+   *
+   * @return		the filter
+   */
+  public ObjectFilter getObjectFilter() {
+    return m_ObjectFilter;
+  }
+
+  /**
+   * Filters the objects, if necessary.
+   *
+   * @param objects	the objects to filter
+   * @return		the potentially updated objects
+   */
+  protected LocatedObjects filter(LocatedObjects objects) {
+    if (m_ObjectFilter instanceof PassThrough)
+      return objects;
+    else
+      return m_ObjectFilter.filter(objects);
+  }
+
+  /**
+   * Filters the report, if necessary.
+   *
+   * @param report	the report to filter
+   * @return		the potentially updated report
+   */
+  protected Report filter(Report report) {
+    LocatedObjects	objects;
+    LocatedObjects	filtered;
+
+    if (m_ObjectFilter instanceof PassThrough)
+      return report;
+
+    objects  = LocatedObjects.fromReport(report, m_Prefix);
+    filtered = m_ObjectFilter.filter(objects);
+    return filtered.toReport(m_Prefix);
   }
 
   /**

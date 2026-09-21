@@ -15,10 +15,12 @@
 
 /*
  * DefaultAnnotationsDisplayGenerator.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotationsdisplay;
+
+import adams.core.ObjectCopyHelper;
 
 /**
  * Ancestor for classes that create AbstractAnnotationsPanel implementations.
@@ -51,6 +53,7 @@ public class DefaultAnnotationsDisplayGenerator
 
     result = new DefaultAnnotationsDisplayPanel();
     result.setPrefix(m_Prefix);
+    result.setObjectFilter(ObjectCopyHelper.copyObject(m_ObjectFilter));
 
     return result;
   }

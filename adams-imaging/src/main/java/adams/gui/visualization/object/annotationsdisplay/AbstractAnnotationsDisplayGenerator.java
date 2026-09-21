@@ -15,12 +15,14 @@
 
 /*
  * AbstractAnnotationsDisplayGenerator.java
- * Copyright (C) 2020 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2020-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.object.annotationsdisplay;
 
 import adams.core.option.AbstractOptionHandler;
+import adams.data.objectfilter.ObjectFilter;
+import adams.data.objectfilter.PassThrough;
 import adams.gui.visualization.image.ReportObjectOverlay;
 
 /**
@@ -39,6 +41,9 @@ public abstract class AbstractAnnotationsDisplayGenerator
   /** the prefix to use. */
   protected String m_Prefix;
 
+  /** the object filter to apply to the report/objects. */
+  protected ObjectFilter m_ObjectFilter;
+
   /**
    * Adds options to the internal list of options.
    */
@@ -49,6 +54,10 @@ public abstract class AbstractAnnotationsDisplayGenerator
     m_OptionManager.add(
       "prefix", "prefix",
       PREFIX_DEFAULT);
+
+    m_OptionManager.add(
+      "object-filter", "objectFilter",
+      new PassThrough());
   }
 
   /**
@@ -78,6 +87,35 @@ public abstract class AbstractAnnotationsDisplayGenerator
    */
   public String prefixTipText() {
     return "The prefix of fields in the report to identify as object location, eg 'Object.'.";
+  }
+
+  /**
+   * Sets the object filter to use for filtering the objects in the report.
+   *
+   * @param value 	the filter
+   */
+  public void setObjectFilter(ObjectFilter value) {
+    m_ObjectFilter = value;
+    reset();
+  }
+
+  /**
+   * Returns the object filter to use for filtering the objects in the report.
+   *
+   * @return 		the filter
+   */
+  public ObjectFilter getObjectFilter() {
+    return m_ObjectFilter;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String objectFilterTipText() {
+    return "The optional object filter to apply to the report/objects before displaying them.";
   }
 
   /**

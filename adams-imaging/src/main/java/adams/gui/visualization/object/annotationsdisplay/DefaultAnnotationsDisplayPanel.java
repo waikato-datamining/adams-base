@@ -105,6 +105,7 @@ public class DefaultAnnotationsDisplayPanel
    */
   @Override
   public void setReport(Report value) {
+    value = filter(value);
     m_ModelReport = new Model(value);
     m_TableReport.setModel(m_ModelReport);
     m_LocatedObjects = null;
@@ -131,6 +132,7 @@ public class DefaultAnnotationsDisplayPanel
     Report	report;
     Report	reportNew;
 
+    value = filter(value);
     Collections.sort(value);
     report    = getReport().getClone();
     report.removeValuesStartingWith(m_Prefix);
