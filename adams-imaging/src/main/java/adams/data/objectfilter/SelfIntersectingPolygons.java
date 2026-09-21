@@ -159,6 +159,8 @@ public class SelfIntersectingPolygons
 	case FLAG:
 	  if (intersects)
 	    obj.getMetaData().put(m_Field, true);
+	  else
+	    obj.getMetaData().remove(m_Field);
 	  result.add(obj);
 	  break;
 	case FLAG_ALL:
