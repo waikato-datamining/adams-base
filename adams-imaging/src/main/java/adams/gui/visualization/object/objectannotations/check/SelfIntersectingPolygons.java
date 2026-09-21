@@ -21,7 +21,7 @@
 package adams.gui.visualization.object.objectannotations.check;
 
 import adams.core.MessageCollection;
-import adams.flow.transformer.locateobjects.GeometryUtils;
+import adams.data.geometry.GeometryUtils;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;

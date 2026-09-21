@@ -20,6 +20,8 @@
 
 package adams.data.geometry;
 
+import adams.core.License;
+import adams.core.annotation.MixedCopyright;
 import adams.data.statistics.StatUtils;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -30,6 +32,7 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -207,5 +210,52 @@ public class GeometryUtils {
 
     return result;
 
+  }
+
+  /**
+   * Checks whether any line segments of the polygon intersect with each other.
+   *
+   * @param poly	the polygon to check
+   * @return		true if self-intersects
+   */
+  @MixedCopyright(
+    author = "https://stackoverflow.com/users/5334403/para-parasolian",
+    license = License.CC_BY_SA_4,
+    url = "https://stackoverflow.com/a/61160160/4698227"
+  )
+  public static boolean selfIntersects(Polygon poly) {
+    int 	len;
+    int		i;
+    int		j;
+    boolean 	cut;
+
+    if (poly == null)
+      return false;
+
+    len = poly.npoints;
+
+    // no cross-over if len < 4
+    if (len < 4)
+      return false;
+
+    for (i = 0; i < len-1; i++) {
+      for (j = i+2; j < len; j++)
+      {
+	// eliminate combinations already checked or not valid
+	if ((i == 0) && (j == (len-1)))
+	  continue;
+
+	cut = Line2D.linesIntersect(
+	  poly.xpoints[i], poly.ypoints[i],
+	  poly.xpoints[i+1], poly.ypoints[i+1],
+	  poly.xpoints[j], poly.ypoints[j],
+	  poly.xpoints[(j+1) % len], poly.ypoints[(j+1) % len]);
+
+	if (cut)
+	  return true;
+      }
+    }
+
+    return false;
   }
 }

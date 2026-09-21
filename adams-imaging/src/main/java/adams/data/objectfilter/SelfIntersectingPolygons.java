@@ -20,7 +20,7 @@
 
 package adams.data.objectfilter;
 
-import adams.flow.transformer.locateobjects.GeometryUtils;
+import adams.data.geometry.GeometryUtils;
 import adams.flow.transformer.locateobjects.LocatedObject;
 import adams.flow.transformer.locateobjects.LocatedObjects;
 
