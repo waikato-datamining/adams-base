@@ -34,6 +34,7 @@ import adams.data.report.Report;
 import adams.flow.core.FlowControlButtonsSupporter;
 import adams.flow.core.Token;
 import adams.gui.core.BaseButton;
+import adams.gui.core.BaseCheckBox;
 import adams.gui.core.BaseDialog;
 import adams.gui.core.BasePanel;
 import adams.gui.core.GUIHelper;
@@ -330,6 +331,9 @@ public class ImageObjectAnnotator
 
   /** the previous label used. */
   protected String m_PreviousLabel;
+
+  /** whether to enforce the annotation check. */
+  protected BaseCheckBox m_CheckBoxEnforceAnnotationCheck;
 
   /** the OK button. */
   protected BaseButton m_ButtonOK;
@@ -1012,6 +1016,12 @@ public class ImageObjectAnnotator
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     dialog.getContentPane().add(panelButtons, BorderLayout.SOUTH);
 
+    m_CheckBoxEnforceAnnotationCheck = new BaseCheckBox("Annotation check");
+    m_CheckBoxEnforceAnnotationCheck.setSelected(!(m_AnnotationCheck instanceof PassThrough));
+    m_CheckBoxEnforceAnnotationCheck.setVisible(!(m_AnnotationCheck instanceof PassThrough));
+    m_CheckBoxEnforceAnnotationCheck.addActionListener((ActionEvent e) -> checkAnnotations());
+    panelButtons.add(m_CheckBoxEnforceAnnotationCheck);
+
     m_ButtonOK = new BaseButton("OK");
     m_ButtonOK.addActionListener((ActionEvent e) -> {
       m_Accepted = true;
@@ -1036,7 +1046,10 @@ public class ImageObjectAnnotator
     if (m_AnnotationCheck == null)
       return;
 
-    msg = m_AnnotationCheck.checkAnnotations(m_PanelObjectAnnotation.getObjects());
+    msg = null;
+    if (m_CheckBoxEnforceAnnotationCheck.isSelected())
+      msg = m_AnnotationCheck.checkAnnotations(m_PanelObjectAnnotation.getObjects());
+
     if (msg == null) {
       m_ButtonOK.setToolTipText(null);
       m_ButtonOK.setEnabled(true);
