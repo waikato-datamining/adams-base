@@ -671,6 +671,9 @@ public class SMBConnection
     Session			result;
     AuthenticationContext 	context;
 
+    if (!m_Executed)
+      ParametersFromFileHelper.applyParameters(this);
+
     if (m_Client == null)
       m_Client = new SMBClient();
 

@@ -1106,6 +1106,8 @@ public class SSHConnection
    */
   @Override
   public Session newSession() {
+    if (!m_Executed)
+      ParametersFromFileHelper.applyParameters(this);
     return newSession(m_Host, m_Port);
   }
 

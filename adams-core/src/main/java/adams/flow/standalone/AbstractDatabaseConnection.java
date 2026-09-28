@@ -627,6 +627,8 @@ public abstract class AbstractDatabaseConnection
    * @return		the connection object
    */
   public adams.db.AbstractDatabaseConnection getConnection() {
+    if (!m_Executed)
+      ParametersFromFileHelper.applyParameters(this);
     m_Connection = retrieveConnection();
     return m_Connection;
   }

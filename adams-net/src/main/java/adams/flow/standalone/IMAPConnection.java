@@ -814,6 +814,8 @@ public class IMAPConnection
    */
   public synchronized ReceiveMailSession getImapSession() {
     if (m_ImapSession == null) {
+      if (!m_Executed)
+	  ParametersFromFileHelper.applyParameters(this);
       m_ImapSession = getImapServer().createSession();
       m_ImapSession.open();
     }
