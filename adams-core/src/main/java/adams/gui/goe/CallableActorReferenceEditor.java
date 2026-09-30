@@ -27,7 +27,7 @@ import adams.core.option.parsing.CallableActorReferenceParsing;
 import adams.flow.core.CallableActorReference;
 import adams.gui.core.BaseButton;
 import adams.gui.core.BaseScrollPane;
-import adams.gui.core.BaseTextField;
+import adams.gui.core.BaseTextFieldWithCopyPasteButtons;
 import adams.gui.core.BaseTreeNode;
 import adams.gui.core.GUIHelper;
 import adams.gui.core.MouseUtils;
@@ -70,7 +70,7 @@ public class CallableActorReferenceEditor
   protected SearchPanel m_PanelSearch;
 
   /** The text field with the value. */
-  protected BaseTextField m_TextValue;
+  protected BaseTextFieldWithCopyPasteButtons m_TextValue;
 
   /**
    * Returns a custom string representation of the object.
@@ -233,7 +233,7 @@ public class CallableActorReferenceEditor
     panelParams.addParameter("_Search", m_PanelSearch);
     panelParams.setUseMnemonicIndicators(true);
 
-    m_TextValue = new BaseTextField(20);
+    m_TextValue = new BaseTextFieldWithCopyPasteButtons(20);
     m_TextValue.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
