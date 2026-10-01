@@ -46,7 +46,9 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Displays dot-notation names in a tree structure.
@@ -82,7 +84,10 @@ public class DotNotationTree<N extends DotNotationNode>
 
   /** the selection mode to use. */
   protected int m_SelectionMode;
-  
+
+  /** the annotations (path -> annotation). */
+  protected Map<String,String> m_Annotations;
+
   /**
    * Initializes the tree with no items.
    */
@@ -101,6 +106,7 @@ public class DotNotationTree<N extends DotNotationNode>
     m_Sorted             = false;
     m_InfoNodeGenerators = new ArrayList<>();
     m_SelectionMode      = TreeSelectionModel.SINGLE_TREE_SELECTION;
+    m_Annotations        = new HashMap<>();
 
     setItems(new ArrayList<>());
   }
@@ -486,6 +492,9 @@ public class DotNotationTree<N extends DotNotationNode>
 	}
       }
     }
+
+    if ((result != null) && m_Annotations.containsKey(item))
+      result.setAnnotation(m_Annotations.get(item));
 
     return result;
   }
@@ -930,6 +939,26 @@ public class DotNotationTree<N extends DotNotationNode>
    */
   public int numItems() {
     return m_Items.size();
+  }
+
+  /**
+   * Sets the annotations to use. Need to be set before calling setItems(...).
+   *
+   * @param value	the annotations, null to remove
+   */
+  public void setAnnotations(Map<String,String> value) {
+    if (value == null)
+      value = new HashMap<>();
+    m_Annotations = new HashMap<>(value);
+  }
+
+  /**
+   * Returns the current annotations in use.
+   *
+   * @return		the annotations, empty if none set
+   */
+  public Map<String, String> getAnnotations() {
+    return m_Annotations;
   }
 
   /**

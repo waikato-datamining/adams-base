@@ -15,7 +15,7 @@
 
 /*
  * DotNotationNode.java
- * Copyright (C) 2009-2016 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core.dotnotationtree;
@@ -43,6 +43,9 @@ public class DotNotationNode
   /** the item. */
   protected String m_Item;
 
+  /** an optional annotation. */
+  protected String m_Annotation;
+
   /**
    * Initializes the node with the specified label.
    *
@@ -51,7 +54,8 @@ public class DotNotationNode
   public DotNotationNode(String label) {
     super(label);
 
-    m_Item = null;
+    m_Item       = null;
+    m_Annotation = null;
   }
 
   /**
@@ -125,6 +129,33 @@ public class DotNotationNode
   }
 
   /**
+   * Sets the annotation to use, null to remove.
+   *
+   * @param value	the annotation to use
+   */
+  public void setAnnotation(String value) {
+    m_Annotation = value;
+  }
+
+  /**
+   * Returns the currently set annotation, if any.
+   *
+   * @return		the annotation in use, null if none set
+   */
+  public String getAnnotation() {
+    return m_Annotation;
+  }
+
+  /**
+   * Checks whether an annotation is present.
+   *
+   * @return		true if present
+   */
+  public boolean hasAnnotation() {
+    return (m_Annotation != null) && !m_Annotation.isEmpty();
+  }
+
+  /**
    * Turns the full label into a transferable string.
    *
    * @return		the generated string
@@ -133,5 +164,26 @@ public class DotNotationNode
   @Override
   public Transferable toTransferable() {
     return new TransferableString(getItem());
+  }
+
+  /**
+   * Returns the plain text string/html string to display.
+   *
+   * @return		the display string
+   */
+  @Override
+  public String toString() {
+    String	result;
+
+    if (hasAnnotation()) {
+      result = "<html>" + super.toString() + "<br>"
+		 + "<font color=\"blue\" size=\"2\">" + getAnnotation() + "</font>"
+		 + "</html>";
+    }
+    else {
+      result = super.toString();
+    }
+
+    return result;
   }
 }
