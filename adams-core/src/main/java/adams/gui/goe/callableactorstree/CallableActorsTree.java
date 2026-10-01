@@ -15,12 +15,14 @@
 
 /*
  * CallableActorsTree.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.goe.callableactorstree;
 
+import adams.core.Utils;
 import adams.core.classmanager.ClassManager;
+import adams.core.logging.LoggingHelper;
 import adams.flow.standalone.CallableActors;
 import adams.gui.goe.actorpathtree.ActorPathNode;
 import adams.gui.goe.actorpathtree.ActorPathTree;
@@ -65,8 +67,7 @@ public class CallableActorsTree
 	result = null;
     }
     catch (Exception e) {
-      System.err.println("Failed to check classname:");
-      e.printStackTrace();
+      LoggingHelper.global().severe(Utils.classToString(getClass()) + ": Failed to check classname: " + classname, e);
     }
     
     return result;
