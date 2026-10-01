@@ -15,12 +15,14 @@
 
 /*
  * DotNotationTree.java
- * Copyright (C) 2009-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core.dotnotationtree;
 
+import adams.core.Utils;
 import adams.core.base.BaseString;
+import adams.core.logging.LoggingHelper;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.BaseScrollPane;
 import adams.gui.core.BaseTextField;
@@ -32,8 +34,6 @@ import com.github.fracpete.jclipboardhelper.TransferableString;
 import javax.swing.JFrame;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
@@ -225,7 +225,7 @@ public class DotNotationTree<N extends DotNotationNode>
       result[0] = newNode(((TransferableString) data.getTransferData(DataFlavor.stringFlavor)).getData());
     }
     catch (Exception e) {
-      e.printStackTrace();
+      LoggingHelper.global().severe(Utils.classToString(getClass()) + ": Failed to generate new tree nodes from transferable!", e);
       result[0] = new DotNotationNode("-ERROR-");
     }
 
@@ -779,8 +779,7 @@ public class DotNotationTree<N extends DotNotationNode>
    */
   public void setItems(String[] items) {
     m_Items.clear();
-    for (String item: items)
-      m_Items.add(item);
+    m_Items.addAll(Arrays.asList(items));
     if (m_Sorted)
       Collections.sort(m_Items);
     buildTree();
@@ -843,7 +842,7 @@ public class DotNotationTree<N extends DotNotationNode>
    * @return		the item or null if no items stored
    */
   public String getFirstItem() {
-    if (m_Items.size() > 0)
+    if (!m_Items.isEmpty())
       return m_Items.get(0);
     else
       return null;
@@ -874,10 +873,10 @@ public class DotNotationTree<N extends DotNotationNode>
 	paths.add(new TreePath(node.getPath()));
       }
     }
-    setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
+    setSelectionPaths(paths.toArray(new TreePath[0]));
 
     // scroll into view
-    if (paths.size() > 0)
+    if (!paths.isEmpty())
       scrollPathToVisible(paths.get(0));
   }
 
@@ -921,7 +920,7 @@ public class DotNotationTree<N extends DotNotationNode>
       }
     }
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
@@ -1026,11 +1025,7 @@ public class DotNotationTree<N extends DotNotationNode>
     final DotNotationTree tree = new DotNotationTree();
     tree.setSorted(true);
     tree.setItems(classes);
-    tree.addTreeSelectionListener(new TreeSelectionListener() {
-      public void valueChanged(TreeSelectionEvent e) {
-	System.out.println(tree.getSelectedItem());
-      }
-    });
+    tree.addTreeSelectionListener(e -> System.out.println(tree.getSelectedItem()));
     final BaseTextField search = new BaseTextField();
     search.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
