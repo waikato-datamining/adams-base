@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetSetCell.java
- * Copyright (C) 2012-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2012-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -55,35 +55,38 @@ import java.util.Iterator;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
- * 
+ *
  * <pre>-name &lt;java.lang.String&gt; (property: name)
  * &nbsp;&nbsp;&nbsp;The name of the actor.
  * &nbsp;&nbsp;&nbsp;default: SpreadSheetSetCell
  * </pre>
- * 
+ *
  * <pre>-annotation &lt;adams.core.base.BaseAnnotation&gt; (property: annotations)
  * &nbsp;&nbsp;&nbsp;The annotations to attach to this actor.
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-skip &lt;boolean&gt; (property: skip)
- * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded 
+ * &nbsp;&nbsp;&nbsp;If set to true, transformation is skipped and the input token is just forwarded
  * &nbsp;&nbsp;&nbsp;as it is.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
  * <pre>-stop-flow-on-error &lt;boolean&gt; (property: stopFlowOnError)
  * &nbsp;&nbsp;&nbsp;If set to true, the flow execution at this level gets stopped in case this
  * &nbsp;&nbsp;&nbsp;actor encounters an error; the error gets propagated; useful for critical
  * &nbsp;&nbsp;&nbsp;actors.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-silent &lt;boolean&gt; (property: silent)
  * &nbsp;&nbsp;&nbsp;If enabled, then no errors are output in the console; Note: the enclosing
  * &nbsp;&nbsp;&nbsp;actor handler must have this enabled as well.
  * &nbsp;&nbsp;&nbsp;default: false
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-no-copy &lt;boolean&gt; (property: noCopy)
@@ -113,17 +116,23 @@ import java.util.Iterator;
  * &nbsp;&nbsp;&nbsp;The column finder to use for identifying cells.
  * &nbsp;&nbsp;&nbsp;default: adams.data.spreadsheet.cellfinder.CellRange
  * </pre>
- * 
+ *
  * <pre>-value &lt;java.lang.String&gt; (property: value)
  * &nbsp;&nbsp;&nbsp;The value to set in the cell(s).
- * &nbsp;&nbsp;&nbsp;default: 
+ * &nbsp;&nbsp;&nbsp;default:
  * </pre>
- * 
+ *
  * <pre>-force-string &lt;boolean&gt; (property: forceString)
  * &nbsp;&nbsp;&nbsp;If enabled, the value is set as string, even if it resembles a number.
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
- * 
+ *
+ * <pre>-expand-variables &lt;boolean&gt; (property: expandVariables)
+ * &nbsp;&nbsp;&nbsp;If enabled, any variables in the value get expanded first before setting
+ * &nbsp;&nbsp;&nbsp;it.
+ * &nbsp;&nbsp;&nbsp;default: false
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
@@ -148,10 +157,13 @@ public class SpreadSheetSetCell
 
   /** the value to set. */
   protected String m_Value;
-  
+
   /** whether to set value as string. */
   protected boolean m_ForceString;
-  
+
+  /** whether to expand variables. */
+  protected boolean m_ExpandVariables;
+
   /**
    * Returns a string describing the object.
    *
@@ -192,6 +204,10 @@ public class SpreadSheetSetCell
     m_OptionManager.add(
       "force-string", "forceString",
       false);
+
+    m_OptionManager.add(
+      "expand-variables", "expandVariables",
+      false);
   }
 
   /**
@@ -224,7 +240,8 @@ public class SpreadSheetSetCell
     result += QuickInfoHelper.toString(this, "value", "'" + m_Value + "'", ", value: ");
     result += QuickInfoHelper.toString(this, "noCopy", m_NoCopy, "no copy", ", ");
     result += QuickInfoHelper.toString(this, "forceString", m_ForceString, "force string", ", ");
-    
+    result += QuickInfoHelper.toString(this, "expandVariables", m_ExpandVariables, "expands vars", ", ");
+
     return result;
   }
 
@@ -407,6 +424,35 @@ public class SpreadSheetSetCell
   }
 
   /**
+   * Sets whether to expand any variable first before setting the value.
+   *
+   * @param value	true if to expand first
+   */
+  public void setExpandVariables(boolean value) {
+    m_ExpandVariables = value;
+    reset();
+  }
+
+  /**
+   * Returns whether to expand any variable first before setting the value.
+   *
+   * @return		true if to expand first
+   */
+  public boolean getExpandVariables() {
+    return m_ExpandVariables;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String expandVariablesTipText() {
+    return "If enabled, any variables in the value get expanded first before setting it.";
+  }
+
+  /**
    * Returns the class that the consumer accepts.
    *
    * @return		adams.core.io.SpreadSheet.class
@@ -441,8 +487,12 @@ public class SpreadSheetSetCell
     int[]			cols;
     Iterator<CellLocation> 	locs;
     CellLocation		loc;
+    String			value;
 
     result = null;
+    value  = m_Value;
+    if (m_ExpandVariables)
+      value = getVariables().expand(value);
 
     if (m_InputToken.getPayload() instanceof SpreadSheet) {
       sheet = ((SpreadSheet) m_InputToken.getPayload());
@@ -450,17 +500,17 @@ public class SpreadSheetSetCell
 	sheet = sheet.getClone();
 
       if (m_UseFinder) {
-        locs = m_Finder.findCells(sheet);
-        while (locs.hasNext()) {
-          loc  = locs.next();
+	locs = m_Finder.findCells(sheet);
+	while (locs.hasNext()) {
+	  loc  = locs.next();
 	  row  = sheet.getRow(loc.getRow());
 	  cell = row.getCell(loc.getColumn());
 	  if (cell == null)
 	    cell = row.addCell(loc.getColumn());
 	  if (m_ForceString)
-	    cell.setContentAsString(m_Value);
+	    cell.setContentAsString(value);
 	  else
-	    cell.setContent(m_Value);
+	    cell.setContent(value);
 	}
 	m_OutputToken = new Token(sheet);
       }
@@ -486,9 +536,9 @@ public class SpreadSheetSetCell
 	      if (cell == null)
 		cell = row.addCell(c);
 	      if (m_ForceString)
-		cell.setContentAsString(m_Value);
+		cell.setContentAsString(value);
 	      else
-		cell.setContent(m_Value);
+		cell.setContent(value);
 	    }
 	  }
 	  m_OutputToken = new Token(sheet);
@@ -501,22 +551,22 @@ public class SpreadSheetSetCell
 	row = row.getClone(row.getOwner());
 
       if (m_UseFinder) {
-        if (m_Finder instanceof RowCellFinder) {
-          locs = ((RowCellFinder) m_Finder).findCells(row);
+	if (m_Finder instanceof RowCellFinder) {
+	  locs = ((RowCellFinder) m_Finder).findCells(row);
 	  while (locs.hasNext()) {
 	    loc  = locs.next();
 	    cell = row.getCell(loc.getColumn());
 	    if (cell == null)
 	      cell = row.addCell(loc.getColumn());
 	    if (m_ForceString)
-	      cell.setContentAsString(m_Value);
+	      cell.setContentAsString(value);
 	    else
-	      cell.setContent(m_Value);
+	      cell.setContent(value);
 	  }
 	  m_OutputToken = new Token(row);
 	}
 	else {
-          result = "Finder cannot handle rows by themselves (does not implement " + Utils.classToString(RowCellFinder.class) + ")";
+	  result = "Finder cannot handle rows by themselves (does not implement " + Utils.classToString(RowCellFinder.class) + ")";
 	  m_OutputToken = new Token(row);
 	}
       }
@@ -534,9 +584,9 @@ public class SpreadSheetSetCell
 	    if (cell == null)
 	      cell = row.addCell(c);
 	    if (m_ForceString)
-	      cell.setContentAsString(m_Value);
+	      cell.setContentAsString(value);
 	    else
-	      cell.setContent(m_Value);
+	      cell.setContent(value);
 	  }
 	  m_OutputToken = new Token(row);
 	}
