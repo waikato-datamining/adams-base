@@ -407,10 +407,6 @@ public class ImageSegmentationAnnotator
     m_OptionManager.add(
       "show-flow-control-buttons", "showFlowControlButtons",
       false);
-
-    m_OptionManager.add(
-      "dialog-title", "dialogTitle",
-      "");
   }
 
   /**
