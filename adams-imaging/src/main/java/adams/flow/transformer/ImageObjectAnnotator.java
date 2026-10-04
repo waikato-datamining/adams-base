@@ -314,9 +314,6 @@ public class ImageObjectAnnotator
   /** whether to show the flow control buttons. */
   protected boolean m_ShowFlowControlButtons;
 
-  /** the title to use for the dialog. */
-  protected String m_DialogTitle;
-
   /** the panel. */
   protected ObjectAnnotationPanel m_PanelObjectAnnotation;
 
@@ -426,10 +423,6 @@ public class ImageObjectAnnotator
     m_OptionManager.add(
       "show-flow-control-buttons", "showFlowControlButtons",
       false);
-
-    m_OptionManager.add(
-      "dialog-title", "dialogTitle",
-      "");
   }
 
   /**
@@ -932,35 +925,6 @@ public class ImageObjectAnnotator
   }
 
   /**
-   * Sets the title for the dialog.
-   *
-   * @param value 	the title, empty for default
-   */
-  public void setDialogTitle(String value) {
-    m_DialogTitle = value;
-    reset();
-  }
-
-  /**
-   * Returns the title for the dialog.
-   *
-   * @return 		the title, empty if default
-   */
-  public String getDialogTitle() {
-    return m_DialogTitle;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String dialogTitleTipText() {
-    return "The title to use for the dialog, leave empty for default.";
-  }
-
-  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return		null if no info available, otherwise short string
@@ -1048,9 +1012,6 @@ public class ImageObjectAnnotator
    */
   protected void postCreateDialog(final BaseDialog dialog, BasePanel panel) {
     JPanel panelButtons;
-
-    if (!m_DialogTitle.isEmpty())
-      dialog.setTitle(m_DialogTitle);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     dialog.getContentPane().add(panelButtons, BorderLayout.SOUTH);
