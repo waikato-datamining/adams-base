@@ -312,9 +312,6 @@ public class ImageSegmentationAnnotator
   /** whether to show the flow control buttons. */
   protected boolean m_ShowFlowControlButtons;
 
-  /** the title to use for the dialog. */
-  protected String m_DialogTitle;
-
   /** whether the dialog got accepted. */
   protected boolean m_Accepted;
 
@@ -949,35 +946,6 @@ public class ImageSegmentationAnnotator
   }
 
   /**
-   * Sets the title for the dialog.
-   *
-   * @param value 	the title, empty for default
-   */
-  public void setDialogTitle(String value) {
-    m_DialogTitle = value;
-    reset();
-  }
-
-  /**
-   * Returns the title for the dialog.
-   *
-   * @return 		the title, empty if default
-   */
-  public String getDialogTitle() {
-    return m_DialogTitle;
-  }
-
-  /**
-   * Returns the tip text for this property.
-   *
-   * @return 		tip text for this property suitable for
-   * 			displaying in the GUI or for listing the options.
-   */
-  public String dialogTitleTipText() {
-    return "The title to use for the dialog, leave empty for default.";
-  }
-
-  /**
    * Returns the class that the consumer accepts.
    *
    * @return		the Class of objects that can be processed
@@ -1041,9 +1009,6 @@ public class ImageSegmentationAnnotator
     BaseButton buttonOK;
     BaseButton	buttonCancel;
     JPanel panelButtons;
-
-    if (!m_DialogTitle.isEmpty())
-      dialog.setTitle(m_DialogTitle);
 
     panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     dialog.getContentPane().add(panelButtons, BorderLayout.SOUTH);
