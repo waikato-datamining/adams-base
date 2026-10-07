@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetFormula.java
- * Copyright (C) 2013-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.parser;
@@ -555,6 +555,8 @@ public class SpreadSheetFormula
   protected void loadSheet() {
     if (m_Input.exists() && !m_Input.isDirectory())
       m_Sheet = m_Reader.read(m_Input);
+    else if (!m_Input.exists())
+      getLogger().warning("Input does not exist: " + m_Input);
   }
 
   /**
