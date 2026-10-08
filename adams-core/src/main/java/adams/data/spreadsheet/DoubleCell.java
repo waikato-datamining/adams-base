@@ -15,7 +15,7 @@
 
 /*
  * DoubleCell.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.data.spreadsheet;
@@ -164,7 +164,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -182,7 +182,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -200,7 +200,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -218,7 +218,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -236,7 +236,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null intepreted as missing value
+   * @param value	the content; null interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -254,7 +254,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null or NaN is intepreted as missing value
+   * @param value	the content; null or NaN is interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -272,7 +272,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null or NaN is intepreted as missing value
+   * @param value	the content; null or NaN is interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -290,7 +290,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -308,7 +308,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -326,7 +326,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -344,7 +344,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -362,7 +362,7 @@ public class DoubleCell
   /**
    * Sets the content of the cell.
    *
-   * @param value	the content; null is intepreted as missing value
+   * @param value	the content; null is interpreted as missing value
    * @return		the cell itself
    */
   @Override
@@ -1237,6 +1237,7 @@ public class DoubleCell
   @Override
   public void calculate() {
     Object	eval;
+    String	formula;
 
     if (!isFormula())
       return;
@@ -1268,12 +1269,18 @@ public class DoubleCell
     m_Calculating = false;
 
     if (eval != null) {
-      if (eval instanceof Double)
+      if (eval instanceof Double) {
 	setContent((Double) eval);
-      else if (eval instanceof Boolean)
+      }
+      else if (eval instanceof Boolean) {
 	setContent((Boolean) eval);
-      else
+      }
+      else {
+	// backup, since parseContent resets formula
+	formula = m_Formula;
 	parseContent("" + eval);
+	m_Formula = formula;
+      }
     }
   }
 
