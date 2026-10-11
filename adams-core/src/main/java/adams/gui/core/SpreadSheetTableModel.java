@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetTableModel.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
@@ -91,26 +91,26 @@ public class SpreadSheetTableModel
   protected ContentType[] m_ColumnType;
 
   /**
-   * Initializes the model with an empty spread sheet.
+   * Initializes the model with an empty spreadsheet.
    */
   public SpreadSheetTableModel() {
     this(new DefaultSpreadSheet());
   }
 
   /**
-   * Initializes the model with the given spread sheet.
+   * Initializes the model with the given spreadsheet.
    *
-   * @param sheet	the spread sheet to display
+   * @param sheet	the spreadsheet to display
    */
   public SpreadSheetTableModel(SpreadSheet sheet) {
     this(sheet, -1);
   }
 
   /**
-   * Initializes the model with the given spread sheet and number of decimals
+   * Initializes the model with the given spreadsheet and number of decimals
    * to display.
    *
-   * @param sheet	the spread sheet to display
+   * @param sheet	the spreadsheet to display
    * @param numDec	the number of decimals to display
    */
   public SpreadSheetTableModel(SpreadSheet sheet, int numDec) {
@@ -268,13 +268,13 @@ public class SpreadSheetTableModel
    * to initialize the table's column header name.  Note: this name does
    * not need to be unique; two columns in a table can have the same name.
    *
-   * @param	columnIndex	the index of the column
-   * @return  the name of the column
+   * @param columnIndex	the index of the column
+   * @return  		the name of the column
    */
   @Override
   public String getColumnName(int columnIndex) {
     String	result;
-    Row	row;
+    Row		row;
 
     if (m_ShowRowColumn && (columnIndex == 0)) {
       if (m_UseSimpleHeader)
@@ -390,7 +390,6 @@ public class SpreadSheetTableModel
    */
   public Object getValueAt(int rowIndex, int columnIndex) {
     Object	result;
-    Row		row;
     Cell	cell;
     double	d;
     double	factor;
@@ -399,10 +398,7 @@ public class SpreadSheetTableModel
       result = rowIndex + 2;
     }
     else {
-      if (m_ShowRowColumn)
-	columnIndex--;
-      row     = m_Sheet.getRow(rowIndex);
-      cell    = row.getCell(m_Sheet.getHeaderRow().getCellKey(columnIndex));
+      cell = getCellAt(rowIndex, columnIndex);
       if (cell == null) {
 	result = null;
       }
@@ -448,10 +444,10 @@ public class SpreadSheetTableModel
   }
 
   /**
-   * Returns the spread sheet cell at the specified location.
+   * Returns the spreadsheet cell at the specified location.
    *
    * @param rowIndex		the current display row index
-   * @param columnIndex	the column index
+   * @param columnIndex		the column index
    * @return			the cell or null if invalid coordinates
    */
   public Cell getCellAt(int rowIndex, int columnIndex) {
@@ -539,7 +535,7 @@ public class SpreadSheetTableModel
   /**
    * Returns the underlying sheet.
    *
-   * @return		the spread sheet
+   * @return		the spreadsheet
    */
   @Override
   public SpreadSheet toSpreadSheet() {
