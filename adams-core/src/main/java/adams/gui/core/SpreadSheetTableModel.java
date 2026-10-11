@@ -386,7 +386,7 @@ public class SpreadSheetTableModel
    *
    * @param rowIndex      the row
    * @param columnIndex   the column
-   * @return              the value of the sepcified cell
+   * @return              the value of the specified cell
    */
   public Object getValueAt(int rowIndex, int columnIndex) {
     Object	result;
