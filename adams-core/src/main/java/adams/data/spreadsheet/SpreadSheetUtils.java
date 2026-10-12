@@ -426,7 +426,7 @@ public class SpreadSheetUtils {
     if (sort)
       Collections.sort(result);
 
-    return result.toArray(new String[result.size()]);
+    return result.toArray(new String[0]);
   }
 
   /**
