@@ -238,7 +238,7 @@ public class SpreadSheetAddFormulaRow
     m_Columns.setSpreadSheet(result);
     cols = m_Columns.getIntIndices();
     row  = result.addRow();
-    lastCol = Integer.toString(result.getColumnCount());
+    lastCol = SpreadSheetUtils.getColumnPosition(result.getColumnCount() - 1);
     lastRow = Integer.toString(result.getRowCount());
     
     for (i = 0; i < cols.length; i++) {
