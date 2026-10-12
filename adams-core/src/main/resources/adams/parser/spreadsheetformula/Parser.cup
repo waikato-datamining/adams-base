@@ -128,7 +128,7 @@ terminal ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE;
 terminal LENGTH, SUM, MIN, MAX, AVERAGE, MEDIAN, STDEV, STDEVP, TRIM, COUNTIF, COUNTBLANK, SUMIF, SLOPE, INTERCEPT;
 terminal LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONTAINS, STARTSWITH, ENDSWITH, CONCATENATE, REPEAT;
 terminal SUBSTR, LOWERCASE, UPPERCASE, MATCHES;
-terminal CELL_OBJECT, CELL_STRING;
+terminal CELL_OBJECT, CELL_STRING, VALUE;
 terminal TRUE, FALSE, LT, LE, GT, GE, EQ, NOT_EQ, NOT, AND, OR, COLON;
 terminal PI, E;
 terminal NOW, TODAY, YEAR, MONTH, DAY, HOUR, MINUTE, SECOND, WEEKNUM, WEEKDAY;
@@ -149,7 +149,7 @@ precedence left PLUS, MINUS;
 precedence left TIMES, DIVISION, MODULO;
 precedence left EXPONENT;
 precedence left LPAREN, RPAREN;
-precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE, LENGTH, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, SUM, TRIM, COUNTIF, COUNTBLANK, SUMIF, SLOPE, INTERCEPT, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONTAINS, STARTSWITH, ENDSWITH, CONCATENATE, REPEAT, FUNCTION, PROCEDURE, CELL_OBJECT, CELL_STRING;
+precedence left ABS, SQRT, LOG, EXP, SIN, COS, TAN, RINT, FLOOR, POW, CEIL, IFELSE, LENGTH, SUBSTR, LOWERCASE, UPPERCASE, MATCHES, SUM, TRIM, COUNTIF, COUNTBLANK, SUMIF, SLOPE, INTERCEPT, LEFT, RIGHT, MID, REPLACE, SUBSTITUTE, FIND, CONTAINS, STARTSWITH, ENDSWITH, CONCATENATE, REPEAT, FUNCTION, PROCEDURE, CELL_OBJECT, CELL_STRING, VALUE;
 precedence left NOT, UMINUS;
 
 expr_list ::= expr_list expr_part | expr_part;
@@ -299,7 +299,19 @@ expr      ::=
                    else
                      RESULT = null; 
                 :}
-                                
+              | VALUE LPAREN CELL:c RPAREN
+                {:
+                   Cell cell = parser.getHelper().getCell(c);
+                   if (cell == null)
+                     RESULT = null;
+                   else if (cell.isLong())
+                     RESULT = cell.toLong();
+                   else if (cell.isDouble())
+                     RESULT = cell.toDouble();
+                   else
+                     RESULT = null;
+                :}
+
               | FUNCTION:f LPAREN RPAREN
                 {: RESULT = parser.getHelper().callFunction(f, new Object[]{}); :}
               | FUNCTION:f LPAREN expr:e1 RPAREN

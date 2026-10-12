@@ -142,6 +142,7 @@ import java.io.*;
   "weekday" { return sf.newSymbol("WeekDay", sym.WEEKDAY); }
   "cellobj" { return sf.newSymbol("Cell object", sym.CELL_OBJECT); }
   "cellstr" { return sf.newSymbol("Cell string", sym.CELL_STRING); }
+  "value" { return sf.newSymbol("Cell string", sym.VALUE); }
   "f_"[a-zA-Z0-9_]+ { return sf.newSymbol("Function", sym.FUNCTION, yytext().substring(2)); }
   "p_"[a-zA-Z0-9_]+ { return sf.newSymbol("Procedure", sym.PROCEDURE, yytext().substring(2)); }
 
