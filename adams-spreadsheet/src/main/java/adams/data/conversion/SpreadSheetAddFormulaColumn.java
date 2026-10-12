@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetAddFormulaColumn.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -262,6 +262,8 @@ public class SpreadSheetAddFormulaColumn
     int		i;
     int[]	rows;
     String	formula;
+    String	lastCol;
+    String	lastRow;
     
     if (m_NoCopy)
       result = input;
@@ -271,14 +273,16 @@ public class SpreadSheetAddFormulaColumn
     m_Rows.setMax(result.getRowCount());
     rows = m_Rows.getIntIndices();
     result.insertColumn(result.getColumnCount(), m_Header);
+    lastCol = SpreadSheetUtils.getColumnPosition(result.getColumnCount() - 2);
+    lastRow = Integer.toString(result.getRowCount() + 1);
     
     for (i = 0; i < rows.length; i++) {
       formula = m_Formula.getValue();
       if (m_ExpandVariables)
         formula = getOptionManager().getVariables().expand(formula);
       formula = formula.replace(PLACEHOLDER_CURRENT_ROW, Integer.toString(rows[i] + 2));
-      formula = formula.replace(PLACEHOLDER_LAST_ROW, Integer.toString(result.getRowCount() + 1));
-      formula = formula.replace(PLACEHOLDER_LAST_COL, SpreadSheetUtils.getColumnPosition(result.getColumnCount() - 2));
+      formula = formula.replace(PLACEHOLDER_LAST_ROW,    lastRow);
+      formula = formula.replace(PLACEHOLDER_LAST_COL,    lastCol);
       row     = result.getRow(rows[i]);
       row.addCell(result.getColumnCount() - 1).setFormula(formula);
     }

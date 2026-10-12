@@ -15,7 +15,7 @@
 
 /*
  * SpreadSheetAddFormulaRow.java
- * Copyright (C) 2013-2018 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.data.conversion;
 
@@ -227,6 +227,8 @@ public class SpreadSheetAddFormulaRow
     int		i;
     int[]	cols;
     String	formula;
+    String	lastCol;
+    String	lastRow;
     
     if (m_NoCopy)
       result = input;
@@ -236,14 +238,16 @@ public class SpreadSheetAddFormulaRow
     m_Columns.setSpreadSheet(result);
     cols = m_Columns.getIntIndices();
     row  = result.addRow();
+    lastCol = Integer.toString(result.getColumnCount());
+    lastRow = Integer.toString(result.getRowCount());
     
     for (i = 0; i < cols.length; i++) {
       formula = m_Formula.getValue();
       if (m_ExpandVariables)
         formula = getOptionManager().getVariables().expand(formula);
       formula = formula.replace(PLACEHOLDER_CURRENT_COLUMN, SpreadSheetUtils.getColumnPosition(cols[i]));
-      formula = formula.replace(PLACEHOLDER_LAST_COLUMN, Integer.toString(result.getColumnCount()));
-      formula = formula.replace(PLACEHOLDER_LAST_ROW, Integer.toString(result.getRowCount()));
+      formula = formula.replace(PLACEHOLDER_LAST_COLUMN,    lastCol);
+      formula = formula.replace(PLACEHOLDER_LAST_ROW,       lastRow);
       row.addCell(cols[i]).setFormula(formula);
     }
     
