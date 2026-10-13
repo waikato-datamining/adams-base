@@ -15,11 +15,12 @@
 
 /*
  * CompareObjectLocations.java
- * Copyright (C) 2019-2023 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.flow.transformer;
 
+import adams.core.ClassCrossReference;
 import adams.core.QuickInfoHelper;
 import adams.data.image.AbstractImageContainer;
 import adams.data.image.BufferedImageContainer;
@@ -29,6 +30,7 @@ import adams.flow.control.StorageUser;
 import adams.flow.core.AutomatableInteraction;
 import adams.flow.core.QueueHelper;
 import adams.flow.core.Token;
+import adams.flow.sink.ObjectLocationComparison;
 import adams.flow.transformer.compareobjectlocations.AbstractComparison;
 import adams.flow.transformer.compareobjectlocations.AbstractComparisonPanel;
 import adams.flow.transformer.compareobjectlocations.SideBySide;
@@ -208,7 +210,7 @@ import java.util.Set;
  */
 public class CompareObjectLocations
   extends AbstractInteractiveTransformerDialog
-  implements StorageUser, AutomatableInteraction {
+  implements StorageUser, AutomatableInteraction, ClassCrossReference {
 
   private static final long serialVersionUID = 2191236912048968711L;
 
@@ -263,6 +265,16 @@ public class CompareObjectLocations
   public String globalInfo() {
     return "Visualizes object locations (annotations and predicted) for the incoming image side-by-side.\n"
       + "Only forwards the image container when accepted.";
+  }
+
+  /**
+   * Returns the cross-referenced classes.
+   *
+   * @return		the classes
+   */
+  @Override
+  public Class[] getClassCrossReferences() {
+    return new Class[]{ObjectLocationComparison.class};
   }
 
   /**
