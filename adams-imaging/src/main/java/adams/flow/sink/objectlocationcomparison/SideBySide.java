@@ -225,6 +225,7 @@ public class SideBySide
      *
      * @return		the current component, can be null
      */
+    @Override
     public JComponent supplyComponent() {
       return m_SplitPane;
     }

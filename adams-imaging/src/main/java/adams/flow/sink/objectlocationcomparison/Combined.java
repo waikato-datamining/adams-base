@@ -40,6 +40,7 @@ import adams.gui.visualization.image.ReportObjectOverlay;
 import adams.gui.visualization.image.leftclick.ViewObjects;
 import com.github.fracpete.javautils.struct.Struct2;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -356,6 +357,16 @@ public class Combined
       m_PanelImage.setScale(zoom);
 
       updateButtons(labels);
+    }
+
+    /**
+     * Returns the current component.
+     *
+     * @return		the current component, can be null
+     */
+    @Override
+    public JComponent supplyComponent() {
+      return m_PanelImage.getPaintPanel();
     }
   }
 
