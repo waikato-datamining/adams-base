@@ -15,7 +15,7 @@
 
 /*
  * MapToString.java
- * Copyright (C) 2022 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2022-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.data.conversion;
@@ -45,6 +45,7 @@ import java.util.Map;
  * <pre>-logging-level &lt;OFF|SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST&gt; (property: loggingLevel)
  * &nbsp;&nbsp;&nbsp;The logging level for outputting errors and debugging output.
  * &nbsp;&nbsp;&nbsp;default: WARNING
+ * &nbsp;&nbsp;&nbsp;min-user-mode: Expert
  * </pre>
  *
  * <pre>-sort-keys &lt;boolean&gt; (property: sortKeys)
@@ -52,17 +53,26 @@ import java.util.Map;
  * &nbsp;&nbsp;&nbsp;default: false
  * </pre>
  *
+ * <pre>-indentation &lt;int&gt; (property: indentation)
+ * &nbsp;&nbsp;&nbsp;The number of spaces to use for indentation.
+ * &nbsp;&nbsp;&nbsp;default: 2
+ * &nbsp;&nbsp;&nbsp;minimum: 0
+ * </pre>
+ *
  <!-- options-end -->
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
  */
 public class MapToString
-    extends AbstractConversion {
+  extends AbstractConversion {
 
   private static final long serialVersionUID = -9077969984646598771L;
 
   /** whether to sort the keys. */
   protected boolean m_SortKeys;
+
+  /** how many spaces to use for indentation. */
+  protected int m_Indentation;
 
   /**
    * Returns a string describing the object.
@@ -72,11 +82,11 @@ public class MapToString
   @Override
   public String globalInfo() {
     return "Turns a map object into a simple string.\n"
-	+ "When encountering date objects as values, they get turned into a string "
-	+ "using: " + DateUtils.getTimestampFormatter().toPattern() + "\n"
-	+ "Output format:\n"
-	+ "<key>:\n"
-	+ "  <value>";
+	     + "When encountering date objects as values, they get turned into a string "
+	     + "using: " + DateUtils.getTimestampFormatter().toPattern() + "\n"
+	     + "Output format:\n"
+	     + "<key>:\n"
+	     + "  <value>";
   }
 
   /**
@@ -87,8 +97,12 @@ public class MapToString
     super.defineOptions();
 
     m_OptionManager.add(
-	"sort-keys", "sortKeys",
-	false);
+      "sort-keys", "sortKeys",
+      false);
+
+    m_OptionManager.add(
+      "indentation", "indentation",
+      2, 0, null);
   }
 
   /**
@@ -121,13 +135,49 @@ public class MapToString
   }
 
   /**
+   * Sets the number of spaces to use for indentation.
+   *
+   * @param value 	the number of spaces
+   */
+  public void setIndentation(int value) {
+    if (getOptionManager().isValid("indentation", value)) {
+      m_Indentation = value;
+      reset();
+    }
+  }
+
+  /**
+   * Returns the number of spaces to use for indentation.
+   *
+   * @return 		the number of spaces
+   */
+  public int getIndentation() {
+    return m_Indentation;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String indentationTipText() {
+    return "The number of spaces to use for indentation.";
+  }
+
+  /**
    * Returns a quick info about the actor, which will be displayed in the GUI.
    *
    * @return null if no info available, otherwise short string
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "sortKeys", (m_SortKeys ? "sorted" : "unsorted"), "keys: ");
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "sortKeys", (m_SortKeys ? "sorted" : "unsorted"), "keys: ");
+    result += QuickInfoHelper.toString(this, "indentation", m_Indentation, ", indentation: ");
+
+    return result;
   }
 
   /**
@@ -165,6 +215,8 @@ public class MapToString
     String 		value;
     DateFormat		dformat;
     List<String> 	keys;
+    StringBuilder	indentation;
+    int			i;
 
     input   = (Map) m_Input;
     keys    = new ArrayList<>(input.keySet());
@@ -172,6 +224,9 @@ public class MapToString
       Collections.sort(keys);
     result  = new StringBuilder();
     dformat = DateUtils.getTimestampFormatter();
+    indentation = new StringBuilder();
+    for (i = 0; i < m_Indentation; i++)
+      indentation.append(" ");
 
     for (Object keyObj: keys) {
       key      = "" + keyObj;
@@ -179,11 +234,11 @@ public class MapToString
       if (valueObj instanceof Date)
 	value = dformat.format((Date) valueObj);
       else if (valueObj.getClass().isArray())
-        value = Utils.arrayToString(valueObj);
+	value = Utils.arrayToString(valueObj);
       else
 	value = "" + valueObj;
       result.append(key).append(":\n");
-      result.append("  ").append(value).append("\n");
+      result.append(indentation).append(value).append("\n");
     }
 
     return result.toString();
