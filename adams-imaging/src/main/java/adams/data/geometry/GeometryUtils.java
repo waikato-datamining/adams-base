@@ -234,6 +234,10 @@ public class GeometryUtils {
 
     len = poly.npoints;
 
+    // are first and last point the same? then skip the last
+    if ((poly.xpoints[0] == poly.xpoints[len-1]) && (poly.ypoints[0] == poly.ypoints[len-1]))
+      len--;
+
     // no cross-over if len < 4
     if (len < 4)
       return false;
