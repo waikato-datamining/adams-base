@@ -20,6 +20,7 @@
 package adams.gui.goe;
 
 import adams.core.ClassLister;
+import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.AbstractOption;
 import adams.core.option.AbstractOptionProducer;
 import adams.core.option.NestedProducer;
@@ -326,11 +327,13 @@ public class GenericObjectEditorPopupMenu
    * @param str				the string to use
    */
   protected boolean updateEditor(PropertyEditor editor, JComponent comp, boolean canChangeClass, boolean customStringRepresentation, boolean textRepresentation, String str) {
-    boolean 		result;
-    PropertyEditor 	actualEditor;
-    GenericArrayEditor 	gae;
-    String[] 		parts;
-    Object		obj;
+    boolean 			result;
+    PropertyEditor 		actualEditor;
+    GenericArrayEditor 		gae;
+    String[] 			parts;
+    Object			obj;
+    Class			cls;
+    AbstractCommandLineHandler	handler;
 
     result = true;
 
@@ -364,13 +367,43 @@ public class GenericObjectEditorPopupMenu
       }
       else {
 	if (gae != null) {
-	  if (!canChangeClass)
+	  cls = null;
+	  if ((gae.getElementEditor() != null) && (gae.getElementEditor().getValue() != null))
+	    cls = gae.getElementEditor().getValue().getClass();
+	  if (!canChangeClass && (cls == null))
 	    throw new IllegalArgumentException("Cannot change class!");
 	  for (String part: parts) {
-	    obj = OptionUtils.forString(Object.class, part);
-	    // TODO correct class?
-	    if (obj != null)
+	    try {
+	      obj = OptionUtils.forString(Object.class, part);
+	      if (obj == null)
+		continue;
+	      if (cls != null) {
+		if (!canChangeClass) {
+		  if (obj.getClass() != cls)
+		    throw new IllegalArgumentException("Cannot change class, but class differs: required=" + cls.getName() + ", supplied=" + obj.getClass().getName());
+		}
+	      }
+	      // TODO correct class?
 	      gae.addObject(obj);
+	    }
+	    catch (Exception e) {
+	      // do we have a commandline handler?
+	      if (cls != null) {
+		handler = AbstractCommandLineHandler.getHandler(cls);
+		if (handler != null) {
+		  try {
+		    obj = handler.fromCommandLine(part);
+		    if (!canChangeClass) {
+		      if (obj.getClass() != cls)
+			throw new IllegalArgumentException("Cannot change class, but class differs: required=" + cls.getName() + ", supplied=" + obj.getClass().getName());
+		    }
+		    gae.addObject(obj);
+		  }
+		  catch (Exception ex) {
+		  }
+		}
+	      }
+	    }
 	  }
 	}
 	else {
