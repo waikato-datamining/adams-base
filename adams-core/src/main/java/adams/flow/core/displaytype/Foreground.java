@@ -74,6 +74,8 @@ public class Foreground
       actor.getFrame().setVisible(false);
       actor.getFrame().setVisible(true);
       actor.getFrame().setExtendedState(JFrame.NORMAL);
+      actor.getFrame().requestFocus();
+      actor.getFrame().requestFocusInWindow();
       actor.getFrame().toFront();
     }
   }
