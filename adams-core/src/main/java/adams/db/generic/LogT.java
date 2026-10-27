@@ -195,9 +195,9 @@ public class LogT
     if (!cond.getSource().isEmpty() && !cond.getSource().isMatchAll())
       whereParts.add(m_Queries.regexp("SOURCE", cond.getSource()));
     if (!cond.getGenerationStartDate().equals(BaseDateTime.infinityPast()))
-      whereParts.add("GENERATION >= '" + cond.getGenerationStartDate().stringValue() + "'");
+      whereParts.add("GENERATION >= " + m_Queries.backquote(cond.getGenerationStartDate().stringValue()));
     if (!cond.getGenerationEndDate().equals(BaseDateTime.infinityFuture()))
-      whereParts.add("GENERATION <= '" + cond.getGenerationEndDate().stringValue() + "'");
+      whereParts.add("GENERATION <= " + m_Queries.backquote(cond.getGenerationEndDate().stringValue()));
 
     // generate sql
     where = new StringBuilder(Utils.flatten(whereParts, " AND "));
