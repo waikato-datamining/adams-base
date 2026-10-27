@@ -23,7 +23,6 @@ package adams.db.queries;
 import adams.core.ClassLister;
 import adams.core.Utils;
 import adams.core.base.BaseRegExp;
-import adams.db.SQLUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ public abstract class AbstractDatabaseQueries
    * @return		the expression
    */
   public String regexp(String col, String expr) {
-    return col + " " + regexpKeyword() + " " + SQLUtils.backquote(expr);
+    return col + " " + regexpKeyword() + " " + backquote(expr);
   }
 
   /**
@@ -131,6 +130,23 @@ public abstract class AbstractDatabaseQueries
     }
 
     return result.toString();
+  }
+
+  /**
+   * Backquotes single quotes in the string and ensures that it is surrounded
+   * by single quotes.
+   *
+   * @param s		the string to backquote and enclose
+   * @return		the processed string
+   */
+  public String backquote(String s) {
+    String	result;
+
+    result = Utils.backQuoteChars(s, new char[]{'\''}, new String[]{"''"});
+    if (!result.startsWith("'"))
+      result = "'" + result + "'";
+
+    return result;
   }
 
   /**

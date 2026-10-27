@@ -15,13 +15,12 @@
 
 /*
  * QueriesMSSQL.java
- * Copyright (C) 2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2025-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.db.queries;
 
 import adams.db.JDBC;
-import adams.db.SQLUtils;
 
 /**
  * MSSQL Server queries.
@@ -49,7 +48,7 @@ public class QueriesMSSQL
    * @return		the expression
    */
   public String regexp(String col, String expr) {
-    return regexpKeyword() + "(" + col + ", " + SQLUtils.backquote(expr) + ")";
+    return regexpKeyword() + "(" + col + ", " + backquote(expr) + ")";
   }
 
   /**

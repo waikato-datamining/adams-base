@@ -15,13 +15,11 @@
 
 /*
  * SQLUtils.java
- * Copyright (C) 2019-2025 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2019-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.db;
 
-import adams.core.Utils;
-import adams.core.base.BaseRegExp;
 import adams.core.logging.Logger;
 import adams.core.logging.LoggingHelper;
 import gnu.trove.list.TByteList;
@@ -223,34 +221,6 @@ public class SQLUtils {
    */
   public static boolean tinyIntToBoolean(int i) {
     return !(i == 0);
-  }
-
-  /**
-   * Backquotes the regular expression and ensures that it is surrounded by single
-   * quotes.
-   *
-   * @param s		the regular expression to backquote and enclose
-   * @return		the processed string
-   */
-  public static String backquote(BaseRegExp s) {
-    return backquote(s.getValue());
-  }
-
-  /**
-   * Backquotes the string and ensures that it is surrounded by single
-   * quotes.
-   *
-   * @param s		the string to backquote and enclose
-   * @return		the processed string
-   */
-  public static String backquote(String s) {
-    String	result;
-
-    result = Utils.backQuoteChars(s);
-    if (!result.startsWith("'"))
-      result = "'" + result + "'";
-
-    return result;
   }
 
   /**

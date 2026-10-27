@@ -15,11 +15,12 @@
 
 /*
  * QueriesMySQL.java
- * Copyright (C) 2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2025-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.db.queries;
 
+import adams.core.Utils;
 import adams.db.JDBC;
 
 /**
@@ -61,5 +62,22 @@ public class QueriesMySQL
   @Override
   public boolean handles(String url) {
     return JDBC.isMySQL(url);
+  }
+
+  /**
+   * Backquotes single quotes in the string and ensures that it is surrounded
+   * by single quotes.
+   *
+   * @param s		the string to backquote and enclose
+   * @return		the processed string
+   */
+  public String backquote(String s) {
+    String	result;
+
+    result = Utils.backQuoteChars(s, new char[]{'\''}, new String[]{"\\'"});
+    if (!result.startsWith("'"))
+      result = "'" + result + "'";
+
+    return result;
   }
 }
