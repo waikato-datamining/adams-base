@@ -134,7 +134,7 @@ public abstract class AbstractDisplay
 
     m_OptionManager.add(
       "custom-icon", "customIcon",
-      getDefaultCustomIcon());
+      getDefaultCustomIcon()).setMinUserMode(UserMode.EXPERT);
   }
 
   /**
