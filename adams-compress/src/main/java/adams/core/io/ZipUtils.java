@@ -15,7 +15,7 @@
 
 /*
  * ZipUtils.java
- * Copyright (C) 2010-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  * Copyright (C) Apache compress commons
  */
 package adams.core.io;
@@ -70,7 +70,7 @@ public class ZipUtils {
    * @return		null if successful, otherwise error message
    */
   public static String compress(File output, File[] files, int bufferSize) {
-    return compress(output, files, "", bufferSize);
+    return compress(output, files, "", "", bufferSize);
   }
 
   /**
@@ -78,7 +78,8 @@ public class ZipUtils {
    *
    * @param output	the output file to generate
    * @param files	the files to store in the zip file
-   * @param stripRegExp	the regular expression used to strip the file names (only applied to the directory!)
+   * @param stripRegExp	the regular expression used to strip the file names (only applied to the directory!), ignored if empty
+   * @param stripPrefix	the string to remove from the start of the file names (only applied to the directory!), case-insensitive, ignored if empty
    * @param bufferSize	the buffer size to use
    * @return		null if successful, otherwise error message
    */
@@ -87,7 +88,7 @@ public class ZipUtils {
       license = License.APACHE2,
       url = "http://commons.apache.org/compress/examples.html"
   )
-  public static String compress(File output, File[] files, String stripRegExp, int bufferSize) {
+  public static String compress(File output, File[] files, String stripRegExp, String stripPrefix, int bufferSize) {
     String			result;
     int				i;
     byte[] 			buf;
@@ -100,11 +101,12 @@ public class ZipUtils {
     String			msg;
     ZipArchiveEntry		entry;
 
-    in     = null;
-    fis    = null;
-    out    = null;
-    fos    = null;
-    result = null;
+    in        = null;
+    fis       = null;
+    out       = null;
+    fos       = null;
+    result    = null;
+    stripPrefix = stripPrefix.toLowerCase();
     try {
       // does file already exist?
       if (output.exists())
@@ -122,6 +124,8 @@ public class ZipUtils {
 	filename = files[i].getParentFile().getAbsolutePath();
 	if (!stripRegExp.isEmpty())
 	  filename = filename.replaceFirst(stripRegExp, "");
+	if (!stripPrefix.isEmpty() && filename.toLowerCase().startsWith(stripPrefix))
+	  filename = filename.substring(stripPrefix.length());
 	if (!filename.isEmpty())
 	  filename += File.separator;
 	filename += files[i].getName();

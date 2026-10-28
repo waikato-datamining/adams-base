@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * ZipExport.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.multiobjectexport;
@@ -181,7 +181,7 @@ public class ZipExport
 
     // create zip file
     if (errors.isEmpty()) {
-      msg = ZipUtils.compress(m_OutputFile, files.toArray(new File[files.size()]), ".*", 1024);
+      msg = ZipUtils.compress(m_OutputFile, files.toArray(new File[0]), ".*", "", 1024);
       if (msg != null)
 	errors.add("Failed to generated ZIP file: " + m_OutputFile + "\n" + msg);
     }

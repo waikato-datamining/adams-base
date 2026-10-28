@@ -13,9 +13,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * Zip.java
- * Copyright (C) 2016 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.filecommander;
@@ -32,7 +32,6 @@ import java.io.File;
  * Creates a ZIP file from the selected files.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class Zip
   extends AbstractFileCommanderAction {
@@ -67,7 +66,7 @@ public class Zip
 	File[] files = getOwner().getActive().getFilePanel().getSelectedFiles();
 	PlaceholderFile zipFile = new PlaceholderFile(getOwner().getActive().getFilePanel().getCurrentDir() + "/" + zip);
 	String regExp = getOwner().getActive().getFilePanel().getCurrentDir().replace("/", ".").replace("\\", ".");
-	String msg = ZipUtils.compress(zipFile, files, regExp, 1024);
+	String msg = ZipUtils.compress(zipFile, files, regExp, "", 1024);
 	if (msg != null) {
 	  GUIHelper.showErrorMessage(getOwner(), "Failed to create ZIP file:\n" + zipFile + "\n" + msg);
 	}

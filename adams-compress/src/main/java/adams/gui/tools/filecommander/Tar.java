@@ -15,7 +15,7 @@
 
 /*
  * Tar.java
- * Copyright (C) 2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2024-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.tools.filecommander;
@@ -69,7 +69,7 @@ public class Tar
 	File[] files = getOwner().getActive().getFilePanel().getSelectedFiles();
 	PlaceholderFile tarFile = new PlaceholderFile(getOwner().getActive().getFilePanel().getCurrentDir() + "/" + tar);
 	String regExp = getOwner().getActive().getFilePanel().getCurrentDir().replace("/", ".").replace("\\", ".");
-	String msg = TarUtils.compress(tarFile, files, regExp, 1024);
+	String msg = TarUtils.compress(tarFile, files, regExp, "", 1024);
 	if (msg != null) {
 	  GUIHelper.showErrorMessage(getOwner(), "Failed to create Tar file:\n" + tarFile + "\n" + msg);
 	}

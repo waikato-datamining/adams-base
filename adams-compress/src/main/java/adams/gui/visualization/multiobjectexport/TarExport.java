@@ -15,7 +15,7 @@
 
 /*
  * TarExport.java
- * Copyright (C) 2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2024-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.visualization.multiobjectexport;
@@ -182,7 +182,7 @@ public class TarExport
 
     // create tar file
     if (errors.isEmpty()) {
-      msg = TarUtils.compress(m_OutputFile, files.toArray(new File[0]), ".*", 1024);
+      msg = TarUtils.compress(m_OutputFile, files.toArray(new File[0]), ".*", "", 1024);
       if (msg != null)
 	errors.add("Failed to generated TAR archive: " + m_OutputFile + "\n" + msg);
     }

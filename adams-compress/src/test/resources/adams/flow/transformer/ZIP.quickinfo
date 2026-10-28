@@ -1,1 +1,1 @@
-${CWD}
+${CWD}, strip path: -no-, strip prefix: -no-, buffer: 1024

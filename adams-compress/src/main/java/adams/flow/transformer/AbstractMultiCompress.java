@@ -15,7 +15,7 @@
 
 /*
  * AbstractMultiCompress.java
- * Copyright (C) 2011-2019 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.transformer;
@@ -45,6 +45,9 @@ public abstract class AbstractMultiCompress
   /** the regular expression to use for stripping the path. */
   protected String m_StripPath;
 
+  /** the prefix to strip from the path. */
+  protected String m_StripPrefix;
+
   /** the buffer size to use. */
   protected int m_BufferSize;
 
@@ -61,6 +64,10 @@ public abstract class AbstractMultiCompress
 
     m_OptionManager.add(
       "strip-path", "stripPath",
+      "");
+
+    m_OptionManager.add(
+      "strip-prefix", "stripPrefix",
       "");
 
     m_OptionManager.add(
@@ -127,6 +134,35 @@ public abstract class AbstractMultiCompress
   }
 
   /**
+   * Sets the prefix to remove from the path.
+   *
+   * @param value	the prefix
+   */
+  public void setStripPrefix(String value) {
+    m_StripPrefix = value;
+    reset();
+  }
+
+  /**
+   * Returns the prefix to remove from the path.
+   *
+   * @return 		the prefix
+   */
+  public String getStripPrefix() {
+    return m_StripPrefix;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return         tip text for this property suitable for
+   *             displaying in the GUI or for listing the options.
+   */
+  public String stripPrefixTipText() {
+    return "The prefix to remove from the path, case-insensitive";
+  }
+
+  /**
    * Sets the buffer size for the stream.
    *
    * @param value	the size in bytes
@@ -164,7 +200,14 @@ public abstract class AbstractMultiCompress
    */
   @Override
   public String getQuickInfo() {
-    return QuickInfoHelper.toString(this, "output", m_Output);
+    String	result;
+
+    result = QuickInfoHelper.toString(this, "output", m_Output);
+    result += QuickInfoHelper.toString(this, "stripPath", (m_StripPath.isEmpty() ? "-no-" : m_StripPath), ", strip path: ");
+    result += QuickInfoHelper.toString(this, "stripPrefix", (m_StripPrefix.isEmpty() ? "-no-" : m_StripPrefix), ", strip prefix: ");
+    result += QuickInfoHelper.toString(this, "bufferSize", m_BufferSize, ", buffer: ");
+
+    return result;
   }
 
   /**
