@@ -15,11 +15,12 @@
 
 /*
  * ImageManager.java
- * Copyright (C) 2022-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2022-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
+import adams.core.io.FileUtils;
 import adams.core.logging.LoggingHelper;
 
 import javax.imageio.ImageIO;
@@ -245,7 +246,10 @@ public class ImageManager {
     try {
       if (m_IconCache.containsKey(filename))
 	return m_IconCache.get(filename);
-      result = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(filename));
+      if (FileUtils.fileExists(filename))
+	result = new ImageIcon(filename);
+      else
+	result = new ImageIcon(ClassLoader.getSystemClassLoader().getResource(filename));
       m_IconCache.put(filename, result);
     }
     catch (Exception e) {
