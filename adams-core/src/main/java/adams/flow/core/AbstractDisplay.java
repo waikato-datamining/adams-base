@@ -15,13 +15,14 @@
 
 /*
  * AbstractDisplay.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.flow.core;
 
 import adams.core.CleanUpHandler;
 import adams.core.QuickInfoHelper;
+import adams.core.io.PlaceholderFile;
 import adams.core.option.UserMode;
 import adams.flow.control.Flow;
 import adams.flow.core.displaytype.AbstractDisplayType;
@@ -79,6 +80,9 @@ public abstract class AbstractDisplay
   /** how to show the display. */
   protected AbstractDisplayType m_DisplayType;
 
+  /** the custom icon to use for the frame. */
+  protected PlaceholderFile m_CustomIcon;
+
   /** the panel to display. */
   protected BasePanel m_Panel;
 
@@ -127,6 +131,10 @@ public abstract class AbstractDisplay
     m_OptionManager.add(
       "y", "y",
       getDefaultY(), -3, null);
+
+    m_OptionManager.add(
+      "custom-icon", "customIcon",
+      getDefaultCustomIcon());
   }
 
   /**
@@ -253,51 +261,6 @@ public abstract class AbstractDisplay
   }
 
   /**
-   * Returns the default value for showing the display.
-   *
-   * @return		the default
-   */
-  protected AbstractDisplayType getDefaultDisplayType() {
-    return new Default();
-  }
-
-  /**
-   * Returns the default X position for the dialog.
-   *
-   * @return		the default X position
-   */
-  protected int getDefaultX() {
-    return -1;
-  }
-
-  /**
-   * Returns the default Y position for the dialog.
-   *
-   * @return		the default Y position
-   */
-  protected int getDefaultY() {
-    return -1;
-  }
-
-  /**
-   * Returns the default width for the dialog.
-   *
-   * @return		the default width
-   */
-  protected int getDefaultWidth() {
-    return 800;
-  }
-
-  /**
-   * Returns the default height for the dialog.
-   *
-   * @return		the default height
-   */
-  protected int getDefaultHeight() {
-    return 600;
-  }
-
-  /**
    * Sets whether to use just the name of the actor or the full name.
    *
    * @param value 	if true just the name will get used, otherwise the full name
@@ -327,13 +290,24 @@ public abstract class AbstractDisplay
   }
 
   /**
+   * Returns the default width for the dialog.
+   *
+   * @return		the default width
+   */
+  protected int getDefaultWidth() {
+    return 800;
+  }
+
+  /**
    * Sets the width of the dialog.
    *
    * @param value 	the width
    */
   public void setWidth(int value) {
-    m_Width = value;
-    reset();
+    if (getOptionManager().isValid("width", value)) {
+      m_Width = value;
+      reset();
+    }
   }
 
   /**
@@ -356,13 +330,24 @@ public abstract class AbstractDisplay
   }
 
   /**
+   * Returns the default height for the dialog.
+   *
+   * @return		the default height
+   */
+  protected int getDefaultHeight() {
+    return 600;
+  }
+
+  /**
    * Sets the height of the dialog.
    *
    * @param value 	the height
    */
   public void setHeight(int value) {
-    m_Height = value;
-    reset();
+    if (getOptionManager().isValid("height", value)) {
+      m_Height = value;
+      reset();
+    }
   }
 
   /**
@@ -385,13 +370,24 @@ public abstract class AbstractDisplay
   }
 
   /**
+   * Returns the default X position for the dialog.
+   *
+   * @return		the default X position
+   */
+  protected int getDefaultX() {
+    return -1;
+  }
+
+  /**
    * Sets the X position of the dialog.
    *
    * @param value 	the X position
    */
   public void setX(int value) {
-    m_X = value;
-    reset();
+    if (getOptionManager().isValid("X", value)) {
+      m_X = value;
+      reset();
+    }
   }
 
   /**
@@ -414,13 +410,24 @@ public abstract class AbstractDisplay
   }
 
   /**
+   * Returns the default Y position for the dialog.
+   *
+   * @return		the default Y position
+   */
+  protected int getDefaultY() {
+    return -1;
+  }
+
+  /**
    * Sets the Y position of the dialog.
    *
    * @param value 	the Y position
    */
   public void setY(int value) {
-    m_Y = value;
-    reset();
+    if (getOptionManager().isValid("Y", value)) {
+      m_Y = value;
+      reset();
+    }
   }
 
   /**
@@ -440,6 +447,53 @@ public abstract class AbstractDisplay
    */
   public String yTipText() {
     return "The Y position of the dialog (>=0: absolute, -1: top, -2: center, -3: bottom).";
+  }
+
+  /**
+   * Returns the default custom icon for the frame/window.
+   *
+   * @return		the default custom icon
+   */
+  protected PlaceholderFile getDefaultCustomIcon() {
+    return new PlaceholderFile();
+  }
+
+  /**
+   * Sets the custom icon to use.
+   *
+   * @param value 	the custom icon, ignored if directory
+   */
+  public void setCustomIcon(PlaceholderFile value) {
+    m_CustomIcon = value;
+    reset();
+  }
+
+  /**
+   * Returns the currently set custom icon.
+   *
+   * @return 		the custom icon, dir if not set
+   */
+  public PlaceholderFile getCustomIcon() {
+    return m_CustomIcon;
+  }
+
+  /**
+   * Returns the tip text for this property.
+   *
+   * @return 		tip text for this property suitable for
+   * 			displaying in the GUI or for listing the options.
+   */
+  public String customIconTipText() {
+    return "The path to the custom icon to use for the frame/window, ignored if pointing to a directory.";
+  }
+
+  /**
+   * Returns the default value for showing the display.
+   *
+   * @return		the default
+   */
+  protected AbstractDisplayType getDefaultDisplayType() {
+    return new Default();
   }
 
   /**
@@ -644,7 +698,11 @@ public abstract class AbstractDisplay
 	super.windowClosing(e);
       }
     });
-    icon = ImageManager.getIcon(getClass());
+    icon = null;
+    if (m_CustomIcon.exists() && !m_CustomIcon.isDirectory())
+      icon = ImageManager.getExternalIcon(m_CustomIcon.getAbsolutePath());
+    if (icon == null)
+      icon = ImageManager.getIcon(getClass());
     if (icon != null)
       result.setIconImage(icon.getImage());
     else
