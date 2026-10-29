@@ -20,6 +20,7 @@
 package adams.gui.goe;
 
 import adams.core.ClassLister;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.AbstractCommandLineHandler;
 import adams.core.option.AbstractOption;
 import adams.core.option.AbstractOptionProducer;
@@ -52,7 +53,6 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -292,7 +292,7 @@ public class GenericObjectEditorPopupMenu
 	  // ignored
 	}
       }
-      Collections.sort(m_Customizers, new CustomizerComparator());
+      m_Customizers.sort(new CustomizerComparator());
     }
   }
 
@@ -400,6 +400,7 @@ public class GenericObjectEditorPopupMenu
 		    gae.addObject(obj);
 		  }
 		  catch (Exception ex) {
+		    // ignored
 		  }
 		}
 	      }
@@ -430,9 +431,9 @@ public class GenericObjectEditorPopupMenu
     }
     catch (Exception e) {
       result = false;
-      e.printStackTrace();
-      GUIHelper.showErrorMessage(
-	comp, "Error processing " + getMenuItemText(customStringRepresentation) + " from clipboard:\n" + e);
+      String msg = "Error processing " + getMenuItemText(customStringRepresentation) + " from clipboard:";
+      LoggingHelper.global().severe(msg, e);
+      GUIHelper.showErrorMessage(comp, msg + "\n" + e);
     }
 
     return result;
