@@ -7,4 +7,5 @@
 
 Handlers=\
   adams.core.option.AdamsCommandLineHandler,\
+  adams.core.option.EnumCommandLineHandler,\
   adams.core.option.DefaultCommandLineHandler
