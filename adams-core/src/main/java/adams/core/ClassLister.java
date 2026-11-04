@@ -15,7 +15,7 @@
 
 /*
  * ClassLister.java
- * Copyright (C) 2007-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2007-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core;
@@ -24,6 +24,8 @@ import adams.core.base.BaseRegExp;
 import adams.core.io.FileUtils;
 import adams.core.io.PlaceholderFile;
 import adams.core.option.OptionUtils;
+import adams.data.map.MapToProperties;
+import adams.data.map.MapToString;
 import adams.env.ClassListerBlacklistDefinition;
 import adams.env.ClassListerDefinition;
 import adams.env.ClasspathBlacklistDefinition;
@@ -368,14 +370,14 @@ public class ClassLister
       System.out.println("[-super <classname>] [-match <regexp>] [-allow-empty] [-filter-by-module <module>]");
       System.out.println();
       System.out.println("'classes' action:");
-      System.out.println("for outputting the class hierarchies as properties file");
-      System.out.println("each key is a superclass, the corresponding value a comma-separated list of class names");
-      System.out.println("-output <props_file>");
+      System.out.println("outputs the class hierarchies as text file, uses Properties format by default");
+      System.out.println("each key is a superclass, the corresponding value contains the class names");
+      System.out.println("-output <file> [-format <adams.data.map.MapToString derived class>]");
       System.out.println();
       System.out.println("'packages' action:");
-      System.out.println("for outputting the packages of the class hierarchies as properties file");
-      System.out.println("each key is a superclass, the corresponding value a comma-separated list of package names");
-      System.out.println("-output <props_file>");
+      System.out.println("outputs the packages of the hierarchies as text file, uses Properties format by default");
+      System.out.println("each key is a superclass, the corresponding value contains the package names");
+      System.out.println("-output <file> [-format <adams.data.map.MapToString derived class>]");
       System.out.println();
       return;
     }
@@ -434,34 +436,62 @@ public class ClassLister
         break;
 
       case "classes":
-        PlaceholderFile class_props_file = new PlaceholderFile(OptionUtils.getOption(args, "-output"));
-        File class_props_dir = class_props_file.getParentFile();
-        if (!class_props_dir.exists()) {
-          if (!class_props_dir.mkdirs()) {
-            System.err.println("Failed to create directory for classes file: " + class_props_dir);
-            System.exit(2);
-          }
-        }
-        Properties class_props = new Properties(getSingleton().toProperties());
-        if (!class_props.save(class_props_file.getAbsolutePath())) {
-	  System.err.println("Failed to write properties with classes to: " + class_props_file);
-	  System.exit(1);
+	PlaceholderFile class_output_file = null;
+	String class_output = OptionUtils.getOption(args, "-output");
+	if (class_output != null) {
+	  class_output_file = new PlaceholderFile(class_output);
+	  File class_output_dir = class_output_file.getParentFile();
+	  if (!class_output_dir.exists()) {
+	    if (!class_output_dir.mkdirs()) {
+	      System.err.println("Failed to create directory for classes file: " + class_output_dir);
+	      System.exit(2);
+	    }
+	  }
+	}
+	String class_format = OptionUtils.getOption(args, "-format");
+	MapToString class_formatter;
+	if (class_format == null)
+	  class_formatter = new MapToProperties();
+	else
+	  class_formatter = (MapToString) OptionUtils.forCommandLine(MapToString.class, class_format);
+	if (class_output == null) {
+	  System.out.println(class_formatter.mapToString(getSingleton().hierarchiesToMap()));
+	}
+	else {
+	  if (!FileUtils.writeToFile(class_output_file.getAbsolutePath(), class_formatter.mapToString(getSingleton().hierarchiesToMap()))) {
+	    System.err.println("Failed to write class information to: " + class_output_file);
+	    System.exit(1);
+	  }
 	}
         break;
 
       case "packages":
-        PlaceholderFile pkgs_props_file = new PlaceholderFile(OptionUtils.getOption(args, "-output"));
-        File pkgs_props_dir = pkgs_props_file.getParentFile();
-        if (!pkgs_props_dir.exists()) {
-          if (!pkgs_props_dir.mkdirs()) {
-            System.err.println("Failed to create directory for packages file: " + pkgs_props_dir);
-            System.exit(2);
-          }
-        }
-        Properties pkgs_props = new Properties(getSingleton().toPackages());
-        if (!pkgs_props.save(pkgs_props_file.getAbsolutePath())) {
-	  System.err.println("Failed to write properties with packages to: " + pkgs_props_file);
-	  System.exit(1);
+	String pkgs_output = OptionUtils.getOption(args, "-output");
+	PlaceholderFile pkgs_output_file = null;
+	if (pkgs_output != null) {
+	  pkgs_output_file = new PlaceholderFile(pkgs_output);
+	  File pkgs_output_dir = pkgs_output_file.getParentFile();
+	  if (!pkgs_output_dir.exists()) {
+	    if (!pkgs_output_dir.mkdirs()) {
+	      System.err.println("Failed to create directory for packages file: " + pkgs_output_dir);
+	      System.exit(2);
+	    }
+	  }
+	}
+	String pkgs_format = OptionUtils.getOption(args, "-format");
+	MapToString pkgs_formatter;
+	if (pkgs_format == null)
+	  pkgs_formatter = new MapToProperties();
+	else
+	  pkgs_formatter = (MapToString) OptionUtils.forCommandLine(MapToString.class, pkgs_format);
+	if (pkgs_output == null) {
+	  System.out.println(pkgs_formatter.mapToString(getSingleton().packagesToMap()));
+	}
+	else {
+	  if (!FileUtils.writeToFile(pkgs_output_file.getAbsolutePath(), pkgs_formatter.mapToString(getSingleton().packagesToMap()))) {
+	    System.err.println("Failed to write package information to: " + pkgs_output_file);
+	    System.exit(1);
+	  }
 	}
         break;
 
