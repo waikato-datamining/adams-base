@@ -235,10 +235,14 @@ public class MapToString
 	value = dformat.format((Date) valueObj);
       else if (valueObj.getClass().isArray())
 	value = Utils.arrayToString(valueObj);
+      else if (valueObj instanceof List)
+	value = Utils.flatten((List) valueObj, "\n");
       else
 	value = "" + valueObj;
       result.append(key).append(":\n");
-      result.append(indentation).append(value).append("\n");
+      result.append(Utils.indent(value, m_Indentation));
+      if (!value.isEmpty())
+	result.append("\n");
     }
 
     return result.toString();
