@@ -317,6 +317,10 @@ adams.data.groupupdate.GroupUpdater=\
 adams.data.idupdate.IDUpdater=\
   adams.data.idupdate
 
+# the schemes for generating a string from a Map object
+adams.data.map.MapToString=\
+  adams.data.map
+
 # the outlier detector schemes
 adams.data.outlier.AbstractOutlierDetector=\
   adams.data.outlier
