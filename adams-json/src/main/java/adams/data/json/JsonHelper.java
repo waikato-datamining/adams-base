@@ -308,8 +308,75 @@ public class JsonHelper {
 	result.put("" + key, value);
       else if (value instanceof Map)
         result.put("" + key, fromMap((Map) value));
+      else if (value instanceof List)
+	result.put("" + key, fromList((List) value));
+      else if (value.getClass().isArray())
+	result.put("" + key, fromArray(value));
       else
 	LoggingHelper.global().warning(JsonHelper.class.getName() + "/fromMap: Unhandled type in map: " + Utils.classToString(value));
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the list into a JSON object.
+   *
+   * @param list	the list to convert
+   * @return		the generated JSON object
+   */
+  public static JSONArray fromList(List list) {
+    JSONArray	result;
+
+    result = new JSONArray();
+    for (Object value: list) {
+      if (value instanceof Number)
+	result.add(value);
+      else if (value instanceof String)
+	result.add(value);
+      else if (value instanceof Boolean)
+	result.add(value);
+      else if (value instanceof Map)
+	result.add(fromMap((Map) value));
+      else if (value instanceof List)
+	result.add(fromList((List) value));
+      else if (value.getClass().isArray())
+	result.add(fromArray(value));
+      else
+	LoggingHelper.global().warning(JsonHelper.class.getName() + "/fromList: Unhandled type in list: " + Utils.classToString(value));
+    }
+
+    return result;
+  }
+
+  /**
+   * Turns the array into a JSON object.
+   *
+   * @param array	the array to convert
+   * @return		the generated JSON object
+   */
+  public static JSONArray fromArray(Object array) {
+    JSONArray	result;
+    int		i;
+    Object	value;
+
+    result = new JSONArray();
+    for (i = 0; i < Array.getLength(array); i++) {
+      value = Array.get(array, i);
+      if (value instanceof Number)
+	result.add(value);
+      else if (value instanceof String)
+	result.add(value);
+      else if (value instanceof Boolean)
+	result.add(value);
+      else if (value instanceof Map)
+	result.add(fromMap((Map) value));
+      else if (value instanceof List)
+	result.add(fromList((List) value));
+      else if (value.getClass().isArray())
+	result.add(fromArray(value));
+      else
+	LoggingHelper.global().warning(JsonHelper.class.getName() + "/fromArray: Unhandled type in array: " + Utils.classToString(value));
     }
 
     return result;
