@@ -240,9 +240,10 @@ public class MapToString
       else
 	value = "" + valueObj;
       result.append(key).append(":\n");
-      result.append(Utils.indent(value, m_Indentation));
-      if (!value.isEmpty())
-	result.append("\n");
+      if (value.isEmpty())
+	result.append(indentation).append("\n");
+      else
+	result.append(Utils.indent(value, m_Indentation));
     }
 
     return result.toString();
