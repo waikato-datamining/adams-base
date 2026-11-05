@@ -15,7 +15,7 @@
 
 /*
  * JsonClassDescriptionProducer.java
- * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2024-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.option;
 
@@ -65,6 +65,10 @@ public class JsonClassDescriptionProducer
 	+ "- 'type' (str): the class name\n"
 	+ "- 'enum' (array of str, optional): if the class represents an enum, this is the array of possible values\n"
 	+ "- 'multiple' (bool): whether this option handles single (false) or multiple (true) values of the specified type\n"
+	+ "- 'default': the default value\n"
+	+ "- 'minUserMode (optional)': the minimum user mode required for displaying the option\n"
+	+ "- 'lowerBound (optional)': the lowest value (for numeric options)\n"
+	+ "- 'upperBound (optional)': the highest value (for numeric options)\n"
 	+ "- 'help' (str, optional): the help associated with this option\n"
 	+ "\n"
 	+ "For more information on JSON, see:\n"
@@ -142,8 +146,9 @@ public class JsonClassDescriptionProducer
    */
   @Override
   public Object processOption(AbstractArgumentOption option) {
-    JSONObject	obj;
-    Method help;
+    JSONObject			obj;
+    Method 			help;
+    AbstractNumericOption	numOption;
 
     obj = new JSONObject();
     obj.put("option", "-" + option.getCommandline());
@@ -152,6 +157,16 @@ public class JsonClassDescriptionProducer
     if (option.getBaseClass().isEnum())
       obj.put("enum", EnumHelper.getValues(option.getBaseClass()));
     obj.put("multiple", option.isMultiple());
+    obj.put("default", option.getDefaultValue());
+    if (option.getMinUserMode() != UserMode.LOWEST)
+      obj.put("minUserMode", option.getMinUserMode());
+    if (option instanceof AbstractNumericOption) {
+      numOption = (AbstractNumericOption) option;
+      if (numOption.getLowerBound() != null)
+	obj.put("lowerBound", numOption.getLowerBound());
+      if (numOption.getUpperBound() != null)
+	obj.put("upperBound", numOption.getUpperBound());
+    }
     help = option.getToolTipMethod();
     if (help != null) {
       try {
