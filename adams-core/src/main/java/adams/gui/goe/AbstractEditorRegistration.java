@@ -15,7 +15,7 @@
 
 /*
  * AbstractEditorRegistration.java
- * Copyright (C) 2011-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.goe;
 
@@ -114,6 +114,6 @@ public abstract class AbstractEditorRegistration
     // register ADAMS as last one
     registration = new AdamsEditorsRegistration();
     if (!registration.register())
-      LOGGER.severe("Failed to register ADMAS editors successfully!");
+      LOGGER.severe("Failed to register ADAMS editors successfully!");
   }
 }
