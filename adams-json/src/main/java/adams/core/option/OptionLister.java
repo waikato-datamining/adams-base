@@ -15,7 +15,7 @@
 
 /*
  * OptionLister.java
- * Copyright (C) 2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2024-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -29,7 +29,8 @@ import net.minidev.json.JSONObject;
 import java.io.File;
 
 /**
- * Outputs the options (commandline, property, type, enum (optional), multiple, help (optional)) for
+ * Outputs the options (commandline, property, type, enum (optional), multiple, default, minUserMode,
+ * lowerBound (only numeric/optional), upperBound (only numeric/optional), help (optional)) for
  * the classes in the ClassLister output props file it receives as input.
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
