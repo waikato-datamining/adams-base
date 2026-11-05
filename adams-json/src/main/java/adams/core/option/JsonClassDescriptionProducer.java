@@ -166,6 +166,9 @@ public class JsonClassDescriptionProducer
 	obj.put("lowerBound", numOption.getLowerBound());
       if (numOption.getUpperBound() != null)
 	obj.put("upperBound", numOption.getUpperBound());
+      // special values
+      if (Double.isNaN(((Number) numOption.getDefaultValue()).doubleValue()))
+	obj.put("default", "NaN");
     }
     help = option.getToolTipMethod();
     if (help != null) {
