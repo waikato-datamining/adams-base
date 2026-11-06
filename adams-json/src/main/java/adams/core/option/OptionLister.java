@@ -24,9 +24,14 @@ import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.classmanager.ClassManager;
 import adams.core.io.FileUtils;
-import net.minidev.json.JSONObject;
+import adams.core.logging.LoggingHelper;
+import adams.core.option.description.AbstractClassDescriptionGenerator;
+import adams.core.option.description.ClassDescriptionGenerator;
+import adams.data.map.MapToJson;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Outputs the options (commandline, property, type, enum (optional), multiple, default, minUserMode,
@@ -94,14 +99,15 @@ public class OptionLister {
    */
   public String execute() {
     Properties				props;
-    JSONObject				output;
+    Map<String,Object> 			output;
+    String				outputStr;
+    Map<String,Object> 			desc;
     String				msg;
     String[]				classes;
-    JsonClassDescriptionProducer	producer;
-    OptionHandler			handler;
     Class				cls;
     Object				obj;
-    JSONObject				desc;
+    ClassDescriptionGenerator		generator;
+    MapToJson 				mapToString;
 
     if (m_ClassListerInput == null)
       return "No classlister props file provided as input!";
@@ -120,8 +126,8 @@ public class OptionLister {
     }
 
     // generate output
-    output   = new JSONObject();
-    producer = new JsonClassDescriptionProducer();
+    mapToString = new MapToJson();
+    output      = new HashMap<>();
     for (String superclass: props.keySetAll()) {
       classes = props.getProperty(superclass).split(",");
       for (String class_ : classes) {
@@ -136,24 +142,26 @@ public class OptionLister {
 	    // no default constructor, so we'll ignore it
 	    continue;
 	  }
-	  if (obj instanceof OptionHandler) {
-	    handler = (OptionHandler) obj;
-	    desc = producer.produce(handler);
-	    output.put(class_, desc.get("options"));
+	  generator = AbstractClassDescriptionGenerator.getHandler(obj);
+	  if (generator != null) {
+	    desc = generator.generate(obj);
+	    if (desc != null)
+	      output.put(class_, desc.get(ClassDescriptionGenerator.KEY_OPTIONS));
 	  }
 	}
 	catch (Exception e) {
-	  System.err.println("Failed to process: " + class_);
-	  e.printStackTrace();
+	  LoggingHelper.global().severe("Failed to process: " + class_, e);
 	}
       }
     }
 
+    outputStr = mapToString.mapToString(output);
+
     if (m_Output == null) {
-      System.out.println(output);
+      System.out.println(outputStr);
     }
     else {
-      msg = FileUtils.writeToFileMsg(m_Output.getAbsolutePath(), output, false, null);
+      msg = FileUtils.writeToFileMsg(m_Output.getAbsolutePath(), outputStr, false, null);
       if (msg != null)
 	return null;
     }

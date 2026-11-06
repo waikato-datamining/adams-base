@@ -85,6 +85,10 @@ adams.core.option.OptionTraverser=\
   adams.core.option,\
   adams.flow.core
 
+# the class description generators
+adams.core.option.description.ClassDescriptionGenerator=\
+  adams.core.option.description
+
 # the help generators
 adams.core.option.help.AbstractHelpGenerator=\
   adams.core.option.help

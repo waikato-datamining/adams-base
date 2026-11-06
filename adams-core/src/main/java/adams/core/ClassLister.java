@@ -144,7 +144,7 @@ public class ClassLister
         propsClasses.load(classes);
         Properties propsPackages = new Properties();
         propsPackages.load(packages);
-        if ((propsClasses.size() > 0) && (propsPackages.size() > 0)) {
+        if ((!propsClasses.isEmpty()) && (!propsPackages.isEmpty())) {
 	  m_ClassTraversal = new PropertiesBasedClassListTraversal(propsClasses);
 	  setPackages(propsPackages);
 	  setBlacklist(new Properties());
@@ -458,7 +458,7 @@ public class ClassLister
 	  System.out.println(class_formatter.mapToString(getSingleton().hierarchiesToMap()));
 	}
 	else {
-	  if (!FileUtils.writeToFile(class_output_file.getAbsolutePath(), class_formatter.mapToString(getSingleton().hierarchiesToMap()))) {
+	  if (!FileUtils.writeToFile(class_output_file.getAbsolutePath(), class_formatter.mapToString(getSingleton().hierarchiesToMap()), false, null)) {
 	    System.err.println("Failed to write class information to: " + class_output_file);
 	    System.exit(1);
 	  }
@@ -488,7 +488,7 @@ public class ClassLister
 	  System.out.println(pkgs_formatter.mapToString(getSingleton().packagesToMap()));
 	}
 	else {
-	  if (!FileUtils.writeToFile(pkgs_output_file.getAbsolutePath(), pkgs_formatter.mapToString(getSingleton().packagesToMap()))) {
+	  if (!FileUtils.writeToFile(pkgs_output_file.getAbsolutePath(), pkgs_formatter.mapToString(getSingleton().packagesToMap()), false, null)) {
 	    System.err.println("Failed to write package information to: " + pkgs_output_file);
 	    System.exit(1);
 	  }

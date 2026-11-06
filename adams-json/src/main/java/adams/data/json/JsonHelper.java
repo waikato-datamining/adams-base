@@ -300,7 +300,9 @@ public class JsonHelper {
     result = new JSONObject();
     for (Object key: map.keySet()) {
       value = map.get(key);
-      if (value instanceof Number)
+      if (value == null)
+	result.put("" + key, null);
+      else if (value instanceof Number)
 	result.put("" + key, value);
       else if (value instanceof String)
 	result.put("" + key, value);
@@ -312,6 +314,8 @@ public class JsonHelper {
 	result.put("" + key, fromList((List) value));
       else if (value.getClass().isArray())
 	result.put("" + key, fromArray(value));
+      else if (value instanceof Class)
+	result.put("" + key, ((Class) value).getName());
       else
 	LoggingHelper.global().warning(JsonHelper.class.getName() + "/fromMap: Unhandled type in map: " + Utils.classToString(value));
     }
@@ -330,7 +334,9 @@ public class JsonHelper {
 
     result = new JSONArray();
     for (Object value: list) {
-      if (value instanceof Number)
+      if (value == null)
+	result.add(null);
+      else if (value instanceof Number)
 	result.add(value);
       else if (value instanceof String)
 	result.add(value);
@@ -342,6 +348,8 @@ public class JsonHelper {
 	result.add(fromList((List) value));
       else if (value.getClass().isArray())
 	result.add(fromArray(value));
+      else if (value instanceof Class)
+	result.add(((Class) value).getName());
       else
 	LoggingHelper.global().warning(JsonHelper.class.getName() + "/fromList: Unhandled type in list: " + Utils.classToString(value));
     }
@@ -363,7 +371,9 @@ public class JsonHelper {
     result = new JSONArray();
     for (i = 0; i < Array.getLength(array); i++) {
       value = Array.get(array, i);
-      if (value instanceof Number)
+      if (value == null)
+	result.add(null);
+      else if (value instanceof Number)
 	result.add(value);
       else if (value instanceof String)
 	result.add(value);
@@ -375,6 +385,8 @@ public class JsonHelper {
 	result.add(fromList((List) value));
       else if (value.getClass().isArray())
 	result.add(fromArray(value));
+      else if (value instanceof Class)
+	result.add(((Class) value).getName());
       else
 	LoggingHelper.global().warning(JsonHelper.class.getName() + "/fromArray: Unhandled type in array: " + Utils.classToString(value));
     }
