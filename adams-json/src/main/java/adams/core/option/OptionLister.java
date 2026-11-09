@@ -31,7 +31,9 @@ import adams.data.map.MapToJson;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Outputs the options (commandline, property, type, enum (optional), multiple, default, minUserMode,
@@ -93,6 +95,41 @@ public class OptionLister {
   }
 
   /**
+   * Collects the data for the specified class.
+   *
+   * @param cls			the class to process
+   * @param baseClassesColl	option traverser instance to use for collecting concrete base classes, ignored if None
+   * @param baseClasses		for collecting the concrete base classes
+   * @param output		for collecting the data
+   */
+  protected void collect(Class cls, ConcreteBaseClassesOptionTraverser baseClassesColl, Set<Class> baseClasses, Map<String,Object> output) {
+    Object				obj;
+    AbstractClassDescriptionGenerator	generator;
+    Map<String,Object>			desc;
+
+    try {
+      obj = cls.getDeclaredConstructor().newInstance();
+      if (baseClassesColl != null) {
+	if (obj instanceof OptionHandler) {
+	  ((OptionHandler) obj).getOptionManager().traverse(baseClassesColl);
+	  baseClasses.addAll(baseClassesColl.getResult());
+	}
+      }
+    }
+    catch (Exception e) {
+      // no default constructor, so we'll ignore it
+      return;
+    }
+    generator = AbstractClassDescriptionGenerator.getHandler(obj);
+    if (generator != null) {
+      desc = generator.generate(obj);
+      if (desc != null)
+	output.put(cls.getName(), desc.get(ClassDescriptionGenerator.KEY_OPTIONS));
+    }
+
+  }
+
+  /**
    * Generates the JSON.
    *
    * @return		null if successful, otherwise error message
@@ -101,13 +138,13 @@ public class OptionLister {
     Properties				props;
     Map<String,Object> 			output;
     String				outputStr;
-    Map<String,Object> 			desc;
     String				msg;
     String[]				classes;
     Class				cls;
-    Object				obj;
-    ClassDescriptionGenerator		generator;
     MapToJson 				mapToString;
+    Set<Class>				managedClasses;
+    Set<Class>				baseClasses;
+    ConcreteBaseClassesOptionTraverser 	baseClassesTrav;
 
     if (m_ClassListerInput == null)
       return "No classlister props file provided as input!";
@@ -125,9 +162,11 @@ public class OptionLister {
       return "Failed to read classlister props file: " + e;
     }
 
-    // generate output
-    mapToString = new MapToJson();
-    output      = new HashMap<>();
+    // collect data
+    output          = new HashMap<>();
+    managedClasses  = new HashSet<>();
+    baseClasses     = new HashSet<>();
+    baseClassesTrav = new ConcreteBaseClassesOptionTraverser();
     for (String superclass: props.keySetAll()) {
       classes = props.getProperty(superclass).split(",");
       for (String class_ : classes) {
@@ -135,19 +174,8 @@ public class OptionLister {
 	  continue;
 	try {
 	  cls = ClassManager.getSingleton().forName(class_);
-	  try {
-	    obj = cls.getDeclaredConstructor().newInstance();
-	  }
-	  catch (Exception e) {
-	    // no default constructor, so we'll ignore it
-	    continue;
-	  }
-	  generator = AbstractClassDescriptionGenerator.getHandler(obj);
-	  if (generator != null) {
-	    desc = generator.generate(obj);
-	    if (desc != null)
-	      output.put(class_, desc.get(ClassDescriptionGenerator.KEY_OPTIONS));
-	  }
+	  managedClasses.add(cls);
+	  collect(cls, baseClassesTrav, baseClasses, output);
 	}
 	catch (Exception e) {
 	  LoggingHelper.global().severe("Failed to process: " + class_, e);
@@ -155,7 +183,17 @@ public class OptionLister {
       }
     }
 
-    outputStr = mapToString.mapToString(output);
+    // remove managed classes
+    baseClasses.removeAll(managedClasses);
+    if (!baseClasses.isEmpty()) {
+      LoggingHelper.global().warning("Adding unmanaged classes: " + baseClasses);
+      for (Class base: baseClasses)
+	collect(base, null, null, output);
+    }
+
+    // generate output
+    mapToString = new MapToJson();
+    outputStr   = mapToString.mapToString(output);
 
     if (m_Output == null) {
       System.out.println(outputStr);
