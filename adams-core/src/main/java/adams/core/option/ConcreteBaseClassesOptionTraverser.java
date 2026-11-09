@@ -14,7 +14,7 @@
  */
 
 /*
- * ConcretBaseClassesOptionTraverser.java
+ * ConcreteBaseClassesOptionTraverser.java
  * Copyright (C) 2026 University of Waikato, Hamilton, New Zealand
  */
 
@@ -31,7 +31,7 @@ import java.util.Set;
  *
  * @author fracpete (fracpete at waikato dot ac dot nz)
  */
-public class ConcretBaseClassesOptionTraverser
+public class ConcreteBaseClassesOptionTraverser
   extends AbstractOptionTraverserWithResult<Set<Class>> {
 
   private static final long serialVersionUID = -4917443862975286313L;
