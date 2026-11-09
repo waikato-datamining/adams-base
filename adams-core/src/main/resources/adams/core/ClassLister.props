@@ -908,6 +908,10 @@ adams.gui.visualization.container.datacontainerpanel.plotpopup.AbstractPlotPopup
 adams.gui.visualization.sequence.metadatacolor.AbstractMetaDataColor=\
   adams.gui.visualization.sequence.metadatacolor
 
+# the options for the axis panel
+adams.gui.visualization.core.AxisPanelOptions=\
+  adams.gui.visualization.core
+
 # the color providers to use for plotting
 adams.gui.visualization.core.ColorProvider=\
   adams.gui.visualization.core
