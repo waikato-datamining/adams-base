@@ -134,6 +134,7 @@ public class WekaClassDescriptionGenerator
 	if (descriptor.getName().equals("options"))
 	  continue;
 	optionInfo = new HashMap<>();
+	optionInfo.put("isAdams", false);
 	optionInfo.put("property", descriptor.getName());
 	if (descriptor.getReadMethod().getReturnType().isArray())
 	  baseClass = descriptor.getReadMethod().getReturnType().getComponentType();

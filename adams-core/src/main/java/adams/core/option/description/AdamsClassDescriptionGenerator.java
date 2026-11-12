@@ -85,6 +85,7 @@ public class AdamsClassDescriptionGenerator
       if (opt instanceof AbstractArgumentOption) {
 	option = (AbstractArgumentOption) opt;
 	optionInfo = new HashMap<>();
+	optionInfo.put("isAdams", true);
 	optionInfo.put("option", "-" + option.getCommandline());
 	optionInfo.put("property", option.getProperty());
 	optionInfo.put("type", Utils.classToString(option.getBaseClass()));
