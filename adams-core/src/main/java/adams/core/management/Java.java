@@ -21,10 +21,13 @@ package adams.core.management;
 
 import adams.core.Utils;
 import adams.core.io.FileUtils;
+import adams.core.logging.LoggingHelper;
 import adams.core.option.OptionUtils;
 import com.github.fracpete.processoutput4j.output.CollectingProcessOutput;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -320,6 +323,33 @@ public class Java {
    */
   public static boolean canStopThread() {
     return (getMajorVersion() <= 17);
+  }
+
+  /**
+   * Returns the JVM arguments.
+   *
+   * @return		the arguments
+   */
+  public static String[] getJVMArguments() {
+    RuntimeMXBean 	bean;
+
+    bean = ManagementFactory.getRuntimeMXBean();
+    return bean.getInputArguments().toArray(new String[0]);
+  }
+
+  /**
+   * Returns the arguments the application was launched with.
+   *
+   * @return		the arguments
+   */
+  public static String[] getApplicationArguments() {
+    try {
+      return OptionUtils.splitOptions(System.getProperty("sun.java.command"));
+    }
+    catch (Exception e) {
+      LoggingHelper.global().severe("Failed to split: " + System.getProperty("sun.java.command"), e);
+      return new String[0];
+    }
   }
 
   /**
