@@ -71,12 +71,14 @@ public class Foreground
   @Override
   public void show(AbstractDisplay actor) {
     if (actor.getCreateFrame() && (actor.getFrame() != null) && !actor.getFrame().isActive()) {
+      actor.getFrame().setExtendedState(JFrame.NORMAL);
       actor.getFrame().setVisible(false);
       actor.getFrame().setVisible(true);
-      actor.getFrame().setExtendedState(JFrame.NORMAL);
+      actor.getFrame().setAlwaysOnTop(true);
+      actor.getFrame().toFront();
       actor.getFrame().requestFocus();
       actor.getFrame().requestFocusInWindow();
-      actor.getFrame().toFront();
+      actor.getFrame().setAlwaysOnTop(false);
     }
   }
 
