@@ -15,7 +15,7 @@
 
 /*
  * SystemInfo.java
- * Copyright (C) 2010-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2010-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -24,10 +24,12 @@ import adams.core.management.Java;
 import adams.core.management.OS;
 import adams.core.management.ProcessUtils;
 import adams.core.management.User;
+import adams.core.option.OptionUtils;
 import adams.data.spreadsheet.DefaultSpreadSheet;
 import adams.data.spreadsheet.Row;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.data.spreadsheet.SpreadSheetSupporter;
+import adams.env.AbstractEnvironment;
 import adams.env.Environment;
 import adams.env.Modules;
 import adams.env.Modules.Module;
@@ -99,6 +101,12 @@ public class SystemInfo
   /** the key for the user's group ID (*nix only). */
   public final static String USER_GID = "user.gid";
 
+  /** the key for the JVM arguments. */
+  public final static String JVM_ARGS = "java.vm.args";
+
+  /** the arguments that the application was launched with. */
+  public final static String ADAMS_ARGS = "adams.args";
+
   /**
    * Initializes the object.
    */
@@ -151,13 +159,15 @@ public class SystemInfo
 
     // others
     m_Info.put(JVM_PID, "" + ProcessUtils.getVirtualMachinePID());
+    m_Info.put(JVM_ARGS, OptionUtils.joinOptions(Java.getJVMArguments()));
     m_Info.put(NUM_CORES, "" + ProcessUtils.getAvailableProcessors());
     m_Info.put(OS_BITNESS, "" + OS.getBitness());
     m_Info.put(OS_ISWINDOWS, "" + OS.isWindows());
     m_Info.put(OS_ISMAC, "" + OS.isMac());
     m_Info.put(OS_ISLINUX, "" + OS.isLinux());
     m_Info.put(OS_ISANDROID, "" + OS.isAndroid());
-    m_Info.put(ADAMS_STARTUP, DateUtils.getTimestampFormatterMsecs().format(Environment.getInstance().getInstantiationTimestamp()));
+    m_Info.put(ADAMS_STARTUP, DateUtils.getTimestampFormatterMsecs().format(AbstractEnvironment.getInstantiationTimestamp()));
+    m_Info.put(ADAMS_ARGS, OptionUtils.joinOptions(Java.getApplicationArguments()));
     if (!m_Info.containsKey(USER_UID)) {
       m_Info.put(USER_UID, "" + User.getUserID());
       m_Info.put(USER_GID, "" + User.getGroupID());
