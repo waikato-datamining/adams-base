@@ -15,12 +15,13 @@
 
 /*
  * ProgramRestartWithMoreHeap.java
- * Copyright (C) 2011 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  *
  */
 
 package adams.gui.menu;
 
+import adams.core.management.Java;
 import adams.core.management.Launcher;
 import adams.core.option.UserMode;
 import adams.gui.application.AbstractApplicationFrame;
@@ -30,7 +31,6 @@ import adams.gui.application.AbstractBasicMenuItemDefinition;
  * Restarts the application with 50% more heap.
  *
  * @author  fracpete (fracpete at waikato dot ac dot nz)
- * @version $Revision$
  */
 public class ProgramRestartWithMoreHeap
   extends AbstractBasicMenuItemDefinition {
@@ -114,5 +114,24 @@ public class ProgramRestartWithMoreHeap
    */
   public boolean requiresRestartableApplication() {
     return true;
+  }
+
+  /**
+   * Returns whether the menu item is available.
+   *
+   * @return		true if available
+   */
+  public boolean isAvailable() {
+    boolean	result;
+
+    result = false;
+    for (String arg: Java.getJVMArguments()) {
+      if (arg.startsWith("-Xmx")) {
+	result = true;
+	break;
+      }
+    }
+
+    return result;
   }
 }
