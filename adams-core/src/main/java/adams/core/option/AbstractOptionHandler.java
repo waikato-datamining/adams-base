@@ -15,7 +15,7 @@
 
 /*
  * AbstractOptionHandler.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
@@ -94,11 +94,8 @@ public abstract class AbstractOptionHandler
 
   /**
    * Finishes the initialization in the constructor.
-   * <br><br>
-   * Initializes the logger again.
    */
   protected void finishInit() {
-    configureLogger();
   }
 
   /**
