@@ -176,17 +176,22 @@ public class Launcher {
 
     result = null;
     value  = value.trim().toLowerCase();
-    if (value.endsWith("k") || value.endsWith("m") || value.endsWith("g")) {
-      try {
-        Integer.parseInt(value.substring(0, value.length() - 1));
-        m_Memory = value;
-      }
-      catch (Exception e) {
-        result = "Failed to parse '" + value + "': " + e;
-      }
+    if (value.equals("auto")) {
+      m_Memory = "";
     }
     else {
-      result = "Memory amount must end with one of the following quantifiers: k, m, g";
+      if (value.endsWith("k") || value.endsWith("m") || value.endsWith("g")) {
+	try {
+	  Integer.parseInt(value.substring(0, value.length() - 1));
+	  m_Memory = value;
+	}
+	catch (Exception e) {
+	  result = "Failed to parse '" + value + "': " + e;
+	}
+      }
+      else {
+	result = "Memory amount must end with one of the following quantifiers: k, m, g";
+      }
     }
 
     return result;
@@ -213,13 +218,19 @@ public class Launcher {
   }
 
   /**
-   * Increase the heap by 50%.
+   * Increase the heap by 50%, if possible.
    */
   protected void increaseHeap() {
     String	suffix;
     String	amount;
     int		i;
     double	factor;
+
+    // auto? can't increase
+    if (m_Memory.isEmpty()) {
+      System.out.println("Memory usage set to 'auto', cannot calculate increased memory!");
+      return;
+    }
 
     // split up memory string
     suffix = "";
@@ -608,7 +619,8 @@ public class Launcher {
 
     cmd = new ArrayList<>();
     cmd.add(Java.getJavaExecutable());
-    cmd.add("-Xmx" + m_Memory);
+    if (!m_Memory.isEmpty())
+      cmd.add("-Xmx" + m_Memory);
     cmd.addAll(m_JVMOptions);
     cmd.add("-classpath");
     cmd.add(getClassPath());
@@ -843,6 +855,7 @@ public class Launcher {
       System.out.println("\tthe heap in the JVM for the process that is being launch.");
       System.out.println("\tUse 'k' for kilobytes, 'm' for megabytes and 'g' for ");
       System.out.println("\tgigabytes. Examples: 1000m, 2g");
+      System.out.println("\tUse 'auto' for using Java's autodetect.");
       System.out.println("-main <classname>");
       System.out.println("\tThe class to launch as main class in the new JVM process.");
       System.out.println("-javaagent <jar-file>");
