@@ -15,13 +15,13 @@
 
 /*
  * SimpleOptionParser.java
- * Copyright (C) 2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2021-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.option;
 
 import adams.core.GlobalInfoSupporter;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
+import eu.tneitzel.argparse4j.inf.ArgumentParser;
 
 /**
  * Interface for classes that can consume command-line options.

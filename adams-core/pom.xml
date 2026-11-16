@@ -182,9 +182,9 @@
     </dependency>
 
     <dependency>
-      <groupId>net.sourceforge.argparse4j</groupId>
+      <groupId>eu.tneitzel</groupId>
       <artifactId>argparse4j</artifactId>
-      <version>0.9.0</version>
+      <version>1.3.0</version>
     </dependency>
 
     <dependency>

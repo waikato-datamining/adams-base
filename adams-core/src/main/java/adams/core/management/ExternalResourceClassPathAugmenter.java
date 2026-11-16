@@ -15,16 +15,16 @@
 
 /*
  * ExternalResourceClassPathAugmenter.java
- * Copyright (C) 2013-2021 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core.management;
 
 import adams.core.io.PlaceholderDirectory;
 import adams.core.io.PlaceholderFile;
-import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.impl.type.FileArgumentType;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.Namespace;
+import eu.tneitzel.argparse4j.impl.Arguments;
+import eu.tneitzel.argparse4j.impl.type.FileArgumentType;
+import eu.tneitzel.argparse4j.inf.ArgumentParser;
+import eu.tneitzel.argparse4j.inf.Namespace;
 
 import java.io.File;
 import java.util.ArrayList;
