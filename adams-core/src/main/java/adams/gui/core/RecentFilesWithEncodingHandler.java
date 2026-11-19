@@ -15,18 +15,17 @@
 
 /*
  * RecentFilesWithEncodingHandler.java
- * Copyright (C) 2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
 import adams.core.io.FileUtils;
 import adams.env.Environment;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class that handles a list of recent files that also store file encoding 
@@ -106,38 +105,13 @@ public class RecentFilesWithEncodingHandler<M>
    * 			full path
    */
   protected synchronized int determineMinimumNumberOfParentDirs() {
-    int			result;
-    HashSet<String>	files;
-    int			num;
-    int			i;
-    List<File>		list;
-    File		file;
-    int			max;
+    List<File> 		recentFiles;
 
-    result = -1;
+    recentFiles = new ArrayList<>();
+    for (String item : m_RecentItems)
+      recentFiles.add(getFile(item));
 
-    list = new ArrayList<File>();
-    max  = 0;
-    for (String item: m_RecentItems) {
-      file = getFile(item);
-      if (!list.contains(file)) {
-	list.add(file);
-	max = Math.max(max, FileUtils.getDirectoryDepth(file));
-      }
-    }
-    num = 0;
-    do {
-      files = new HashSet<String>();
-      for (i = 0; i < list.size(); i++)
-	files.add(FileUtils.createPartialFilename(list.get(i), num));
-      if (files.size() == list.size())
-	result = num;
-      else
-	num++;
-    }
-    while (files.size() < list.size() && (num <= max));
-
-    return result;
+    return FileUtils.determineMinimumNumberOfParentDirs(recentFiles);
   }
 
   /**

@@ -15,7 +15,7 @@
 
 /*
  * RecentFilesHandlerWithCommandline.java
- * Copyright (C) 2013-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2013-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.core;
 
@@ -24,8 +24,8 @@ import adams.core.option.OptionUtils;
 import adams.gui.core.RecentFilesHandlerWithCommandline.Setup;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Recent files handler that stores a commandline alongside the file.
@@ -218,31 +218,13 @@ public class RecentFilesHandlerWithCommandline<M>
    * 			full path
    */
   protected synchronized int determineMinimumNumberOfParentDirs() {
-    int			result;
-    Set<String> 	files;
-    int			num;
-    int			i;
-    int			max;
+    List<File> 		recentFiles;
 
-    result = -1;
+    recentFiles = new ArrayList<>();
+    for (Setup setup : m_RecentItems)
+      recentFiles.add(setup.getFile());
 
-    max = 0;
-    for (i = 0; i < m_RecentItems.size(); i++)
-      max = Math.max(max, FileUtils.getDirectoryDepth(m_RecentItems.get(i).getFile()));
-
-    num = 0;
-    do {
-      files = new HashSet<>();
-      for (i = 0; i < m_RecentItems.size(); i++)
-	files.add(FileUtils.createPartialFilename(m_RecentItems.get(i).getFile(), num));
-      if (files.size() == m_RecentItems.size())
-	result = num;
-      else
-	num++;
-    }
-    while ((files.size() < m_RecentItems.size()) && (num <= max));
-
-    return result;
+    return FileUtils.determineMinimumNumberOfParentDirs(recentFiles);
   }
 
   /**

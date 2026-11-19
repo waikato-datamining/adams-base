@@ -1,6 +1,6 @@
 /*
  * AbstractFileBasedHistory.java
- * Copyright (C) 2016-2020 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2016-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.core;
 
@@ -14,9 +14,7 @@ import javax.swing.JPopupMenu;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * History for file objects.
@@ -102,31 +100,7 @@ public abstract class AbstractFileBasedHistory<T extends File>
    * 			full path
    */
   protected synchronized int determineMinimumNumberOfParentDirs() {
-    int		result;
-    Set<String> files;
-    int		num;
-    int		i;
-    int		max;
-
-    result = -1;
-
-    max = 0;
-    for (i = 0; i < m_History.size(); i++)
-      max = Math.max(max, FileUtils.getDirectoryDepth(m_History.get(i)));
-
-    num = 0;
-    do {
-      files = new HashSet<>();
-      for (i = 0; i < m_History.size(); i++)
-	files.add(FileUtils.createPartialFilename(m_History.get(i), num));
-      if (files.size() == m_History.size())
-	result = num;
-      else
-	num++;
-    }
-    while ((files.size() < m_History.size()) && (num <= max));
-
-    return result;
+    return FileUtils.determineMinimumNumberOfParentDirs(new ArrayList<>(m_History));
   }
 
   /**

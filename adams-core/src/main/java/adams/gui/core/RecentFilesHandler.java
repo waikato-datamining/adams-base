@@ -15,16 +15,16 @@
 
 /*
  * RecentFilesHandler.java
- * Copyright (C) 2009-2013 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.core;
 
-import java.io.File;
-import java.util.HashSet;
-
 import adams.core.io.FileUtils;
 import adams.env.Environment;
+
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * A class that handles a list of recent files. Reads/writes them from/to
@@ -103,31 +103,7 @@ public class RecentFilesHandler<M>
    * 			full path
    */
   protected synchronized int determineMinimumNumberOfParentDirs() {
-    int			result;
-    HashSet<String>	files;
-    int			num;
-    int			i;
-    int			max;
-
-    result = -1;
-
-    max = 0;
-    for (i = 0; i < m_RecentItems.size(); i++)
-      max = Math.max(max, FileUtils.getDirectoryDepth(m_RecentItems.get(i)));
-
-    num = 0;
-    do {
-      files = new HashSet<String>();
-      for (i = 0; i < m_RecentItems.size(); i++)
-	files.add(FileUtils.createPartialFilename(m_RecentItems.get(i), num));
-      if (files.size() == m_RecentItems.size())
-	result = num;
-      else
-	num++;
-    }
-    while ((files.size() < m_RecentItems.size()) && (num <= max));
-
-    return result;
+    return FileUtils.determineMinimumNumberOfParentDirs(new ArrayList<>(m_RecentItems));
   }
 
   /**

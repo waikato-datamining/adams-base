@@ -15,7 +15,7 @@
 
 /*
  * FileUtils.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.core.io;
@@ -52,7 +52,9 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -1676,6 +1678,52 @@ public class FileUtils {
     result = new String[files.length];
     for (i = 0; i < files.length; i++)
       result[i] = new PlaceholderFile(files[i]).getAbsolutePath();
+
+    return result;
+  }
+
+  /**
+   * Determines the minimum number of parent directories that need to be
+   * included in the filename to make the filenames distinguishable.
+   *
+   * @param files 	the files to determine the minimum for
+   * @return		the minimum number of parent directories, -1 means full path
+   */
+  public static int determineMinimumNumberOfParentDirs(List<File> files) {
+    return determineMinimumNumberOfParentDirs(files.toArray(new File[0]));
+  }
+
+  /**
+   * Determines the minimum number of parent directories that need to be
+   * included in the filename to make the filenames distinguishable.
+   *
+   * @param files 	the files to determine the minimum for
+   * @return		the minimum number of parent directories, -1 means full path
+   */
+  public static int determineMinimumNumberOfParentDirs(File[] files) {
+    int			result;
+    Set<String> 	names;
+    int			num;
+    int			i;
+    int			max;
+
+    result = -1;
+
+    max = 0;
+    for (i = 0; i < files.length; i++)
+      max = Math.max(max, FileUtils.getDirectoryDepth(files[i]));
+
+    num = 0;
+    do {
+      names = new HashSet<>();
+      for (i = 0; i < files.length; i++)
+	names.add(FileUtils.createPartialFilename(files[i], num));
+      if (names.size() == files.length)
+	result = num;
+      else
+	num++;
+    }
+    while ((names.size() < files.length) && (num <= max));
 
     return result;
   }
