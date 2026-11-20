@@ -15,13 +15,14 @@
 
 /*
  * FlowTabbedPane.java
- * Copyright (C) 2011-2023 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2011-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.flow;
 
 import adams.core.ClassLister;
 import adams.core.Properties;
 import adams.core.classmanager.ClassManager;
+import adams.core.io.FileUtils;
 import adams.flow.core.Actor;
 import adams.gui.core.BasePopupMenu;
 import adams.gui.core.ConsolePanel;
@@ -240,7 +241,7 @@ public class FlowMultiPagePane
       result = (FlowPanel) newInstance(m_FlowPanelClass, new Class[]{FlowMultiPagePane.class}, new Object[]{this});
     }
     catch (Exception e) {
-      ConsolePanel.getSingleton().append("Failed to instantiate flow panel class: " + m_FlowPanelClass.getClass().getName(), e);
+      ConsolePanel.getSingleton().append("Failed to instantiate flow panel class: " + m_FlowPanelClass.getName(), e);
       result = new FlowPanel(this);
     }
 
@@ -249,6 +250,41 @@ public class FlowMultiPagePane
     result.requestFocus();
 
     return result;
+  }
+
+  /**
+   * Adds the page at the end.
+   *
+   * @param title	the title
+   * @param page	the page component
+   */
+  public void addPage(String title, Component page) {
+    super.addPage(title, page);
+    updatePageTitles();
+  }
+
+  /**
+   * Updates the page titles, adds parent dirs if necessary to better distinguish them.
+   */
+  public void updatePageTitles() {
+    List<File>	files;
+    int		i;
+    int		min;
+    String	title;
+
+    files = new ArrayList<>();
+    for (i = 0; i < getPanelCount(); i++) {
+      if (getPanelAt(i).getCurrentFile() != null)
+	files.add(getPanelAt(i).getCurrentFile());
+    }
+
+    min = FileUtils.determineMinimumNumberOfParentDirs(files);
+    for (i = 0; i < getPageCount(); i++) {
+      if (getPanelAt(i).getCurrentFile() != null) {
+	title = FileUtils.replaceExtension(FileUtils.createPartialFilename(getPanelAt(i).getCurrentFile(), min), "");
+	setTitleAt(i, title);
+      }
+    }
   }
 
   /**
@@ -561,6 +597,7 @@ public class FlowMultiPagePane
 
     setTitleAt(index, title);
     updateOwnerTitle();
+    updatePageTitles();
   }
 
   /**
@@ -607,6 +644,7 @@ public class FlowMultiPagePane
 
     result = super.removePageAt(index);
 
+    updatePageTitles();
     updateOwnerTitle();
 
     // remove actor path
