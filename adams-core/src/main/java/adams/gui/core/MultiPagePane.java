@@ -15,7 +15,7 @@
 
 /*
  * MultiPagePane.java
- * Copyright (C) 2018-2024 University of Waikato, Hamilton, NZ
+ * Copyright (C) 2018-2026 University of Waikato, Hamilton, NZ
  */
 
 package adams.gui.core;
@@ -862,6 +862,7 @@ public class MultiPagePane
    */
   public void setTitleAt(int index, String title) {
     getPageContainerAt(index).setTitle(title);
+    setPageAt(index, getPageContainerAt(index));  // to trigger an update in the model and relayout the component
     update();
   }
 
