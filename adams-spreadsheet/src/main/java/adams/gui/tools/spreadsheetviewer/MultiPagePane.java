@@ -15,10 +15,11 @@
 
 /*
  * MultiPagePane.java
- * Copyright (C) 2009-2024 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 package adams.gui.tools.spreadsheetviewer;
 
+import adams.core.io.FileUtils;
 import adams.data.spreadsheet.SpreadSheet;
 import adams.gui.core.SpreadSheetTable;
 import adams.gui.core.spreadsheettable.CellRenderingCustomizer;
@@ -503,6 +504,7 @@ public class MultiPagePane
 
     result = addPage(createPageTitle(file, sheet), sheet);
     result.setFilename(file);
+    updatePageTitles();
 
     return result;
   }
@@ -538,7 +540,19 @@ public class MultiPagePane
   public String createPageTitle(File file, SpreadSheet sheet) {
     return file.getName() + (sheet.getName() != null ? "/" + sheet.getName() : "");
   }
-  
+
+  /**
+   * Creates a page title.
+   *
+   * @param file	the file name to use
+   * @param min		the minimum number of parent dirs to include, -1 for absolute path
+   * @param sheet	the sheet loaded from the file
+   * @return		the generated title
+   */
+  public String createPageTitle(File file, int min, SpreadSheet sheet) {
+    return FileUtils.createPartialFilename(file, min) + (sheet.getName() != null ? "/" + sheet.getName() : "");
+  }
+
   /**
    * Returns all the page titles.
    * 
@@ -576,6 +590,34 @@ public class MultiPagePane
   }
 
   /**
+   * Updates the page titles, if necessary adds parent dirs to better distinguish the spreadsheets.
+   */
+  protected void updatePageTitles() {
+    List<File>	files;
+    int		i;
+    int		min;
+    String	title;
+
+    files = new ArrayList<>();
+    for (i = 0; i < getPageCount(); i++) {
+      if (getPanelAt(i).getFilename() != null)
+	files.add(getPanelAt(i).getFilename());
+    }
+
+    min = FileUtils.determineMinimumNumberOfParentDirs(files);
+    for (i = 0; i < getPageCount(); i++) {
+      if (getPanelAt(i).getFilename() != null) {
+	title = createPageTitle(getPanelAt(i).getFilename(), min, getPanelAt(i).getSheet());
+	if (getPanelAt(i).isModified())
+	  title = PREFIX_MODIFIED + title;
+	if (!title.equals(getTitleAt(i)))
+	  setTitleAt(i, title);
+      }
+    }
+  }
+
+
+  /**
    * Gets called when a page gets selected.
    * 
    * @param e		the event that triggered the action
@@ -610,6 +652,8 @@ public class MultiPagePane
 
     panel = getPanelAt(index);
     panel.cleanUp();
+
+    updatePageTitles();
 
     return super.removePageAt(index);
   }
