@@ -1,16 +1,28 @@
 # Project: adams
-# Date: 2025-11-24 12:11:35
+# Date: 2026-11-25 08:51:25
 # User: fracpete
 # Charset: UTF-8
-# Modules: adams-core
+# Modules: adams-annotator,adams-audio,adams-compress,adams-core,adams-djl,adams-docker,adams-event,adams-excel,adams-ffmpeg,adams-git,adams-groovy,adams-imaging,adams-imaging-boofcv,adams-imaging-djl,adams-imaging-ext,adams-jep,adams-json,adams-math,adams-meta,adams-ml,adams-net,adams-odf,adams-opencv,adams-pdf,adams-python,adams-random,adams-rats-core,adams-rats-net,adams-redis,adams-spreadsheet,adams-terminal,adams-video,adams-visualstats,adams-weka,adams-xml,adams-yaml
 #
 adams.flow.control.Flow -annotation "You can use this flow to combine files that have been split using the following flow:\\n  adams-core-split_file.flow\\nThe flow will prompt you to select the files to merge." -execute-on-error adams.flow.control.postflowexecution.Null -execute-on-finish adams.flow.control.postflowexecution.Null -flow-execution-listener adams.flow.execution.NullListener -flow-restart-manager adams.flow.control.flowrestart.NullManager
+ adams.flow.standalone.CallableActors
+  adams.flow.source.SwitchedSource -name "unit to factor" -condition "adams.flow.condition.bool.HasVariableValue -variable-name unit -value byte" -condition "adams.flow.condition.bool.HasVariableValue -variable-name unit -value kilobyte" -condition "adams.flow.condition.bool.HasVariableValue -variable-name unit -value megabyte" -condition "adams.flow.condition.bool.HasVariableValue -variable-name unit -value gigabyte"
+   adams.flow.source.CombineVariables -name byte -expression 1 -conversion adams.data.conversion.StringToLong
+   adams.flow.source.CombineVariables -name kilobyte -expression 1024 -conversion adams.data.conversion.StringToLong
+   adams.flow.source.CombineVariables -name megabyte -expression 1048576 -conversion adams.data.conversion.StringToLong
+   adams.flow.source.CombineVariables -name gigabyte -expression 1073741824 -conversion adams.data.conversion.StringToLong
  adams.flow.source.Start
  adams.flow.control.Trigger -name "prompt user"
   adams.flow.standalone.SetVariable -name "restore file" -var-name restore -var-value @{flow_filename_long}.props -value-type FILE_FORWARD_SLASHES -expand-value true
-  adams.flow.source.EnterManyValues -name Parameters -stop-if-canceled true -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name input_dir -display \"Input dir\" -help \"the directory with the files to merge\" -file-chooser-title \"Input dir\" -use-forward-slashes true -use-absolute-path true" -value "adams.flow.source.valuedefinition.ListSelectionValueDefinition -name file_type -display \"File type\" -help \"how to treat the files\" -value TEXT -value BINARY -default-value BINARY" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name buffer_size -display \"Buffer size\" -help \"used for the buffer for copying data\" -type INTEGER -default-value 10240000" -value "adams.flow.source.valuedefinition.FileValueDefinition -name output_file -display \"Output file\" -help \"the file to generate from the splits\" -file-chooser-title \"Output file\" -use-forward-slashes true -use-absolute-path true -accept-all-file-filter true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
+  adams.flow.source.EnterManyValues -name Parameters -stop-if-canceled true -value "adams.flow.source.valuedefinition.DirectoryValueDefinition -name input_dir -display \"Input dir\" -help \"the directory with the files to merge\" -file-chooser-title \"Input dir\" -use-forward-slashes true -use-absolute-path true" -value "adams.flow.source.valuedefinition.ListSelectionValueDefinition -name file_type -display \"File type\" -help \"how to treat the files\" -value TEXT -value BINARY -default-value BINARY" -value "adams.flow.source.valuedefinition.DefaultValueDefinition -name buffer_size -display \"Buffer size\" -help \"used for the buffer for copying data\" -type INTEGER -default-value 10" -value "adams.flow.source.valuedefinition.ListSelectionValueDefinition -name buffer_size_unit -display \"Buffer size unit\" -help \"the unit for the buffer size\" -value byte -value kilobyte -value megabyte -value gigabyte -default-value megabyte" -value "adams.flow.source.valuedefinition.FileValueDefinition -name output_file -display \"Output file\" -help \"the file to generate from the splits\" -file-chooser-title \"Output file\" -use-forward-slashes true -use-absolute-path true -accept-all-file-filter true" -output-type MAP -restoration-enabled true -restoration-file @{restore}
   adams.flow.transformer.MapToVariables
+  adams.flow.control.Trigger -name "buffer size"
+   adams.flow.standalone.SetVariable -var-name unit -var-value @{buffer_size_unit}
+   adams.flow.source.CallableSource -callable "unit to factor"
+   adams.flow.transformer.MathExpression -expression "X * @{buffer_size}"
+   adams.flow.transformer.Convert -conversion adams.data.conversion.DoubleToLong
+   adams.flow.transformer.SetVariable -name "SetVariable (2)" -var-name buffer_size_act
  adams.flow.control.Trigger -name process
   adams.flow.source.FileSystemSearch -output-array true -search "adams.flow.source.filesystemsearch.LocalFileSearch -directory @{input_dir} -sorting SORT_BY_NAME" -use-forward-slashes true
   adams.flow.transformer.SelectArraySubset -stop-if-canceled true -message "Please select files to merge" -allow-search true -initial-selection 1-last
-  adams.flow.sink.MergeFiles -output @{output_file} -file-type @{file_type} -buffer-size @{buffer_size}
+  adams.flow.sink.MergeFiles -output @{output_file} -file-type @{file_type} -buffer-size @{buffer_size_act}
