@@ -282,7 +282,10 @@ public class FlowMultiPagePane
     for (i = 0; i < getPageCount(); i++) {
       if (getPanelAt(i).getCurrentFile() != null) {
 	title = FileUtils.replaceExtension(FileUtils.createPartialFilename(getPanelAt(i).getCurrentFile(), min), "");
-	setTitleAt(i, title);
+	if (getPanelAt(i).isModified())
+	  title = "*" + title;
+	if (!getTitleAt(i).equals(title))
+	  setTitleAt(i, title);
       }
     }
   }
@@ -593,6 +596,9 @@ public class FlowMultiPagePane
 
     index = indexOfPage(panel);
     if (index == -1)
+      return;
+
+    if (getTitleAt(index).equals(title))
       return;
 
     setTitleAt(index, title);

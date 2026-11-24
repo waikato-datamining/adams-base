@@ -15,7 +15,7 @@
 
 /*
  * FlowPanel.java
- * Copyright (C) 2009-2025 University of Waikato, Hamilton, New Zealand
+ * Copyright (C) 2009-2026 University of Waikato, Hamilton, New Zealand
  */
 
 package adams.gui.flow;
@@ -573,8 +573,11 @@ public class FlowPanel
    */
   public void updateTitle() {
     setParentTitle(generateTitle());
-    if (getOwner() != null)
-      getOwner().updateTitle(this, (isModified() ? "*" : "") + getTitle());
+    if (getOwner() != null) {
+      if (isModified())
+	setPageIcon(null);
+      getOwner().updatePageTitles();
+    }
   }
 
   /**
